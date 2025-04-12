@@ -1,0 +1,5 @@
+ariadne==0.26.1
+dotenv~=0.9.9
+starlette==0.46.1
+uvicorn==0.34.0
+uvloop==0.21.0

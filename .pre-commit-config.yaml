@@ -63,3 +63,11 @@ repos:
         entry: ./run_radon.sh
         language: script
         types: [ python ]
+      - id: pytest-check
+        name: pytest-check
+        entry: pytest -vvvv -s
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
+        files: '\.py$'
