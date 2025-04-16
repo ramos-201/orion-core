@@ -1,22 +1,19 @@
-from ariadne import (
-    gql,
-    make_executable_schema,
+from ariadne import make_executable_schema
+
+from src.api.resolvers.mutations import mutation
+from src.api.resolvers.queries import query
+from src.api.resolvers.types import (
+    auth_payload_type,
+    user_type,
 )
-
-from src.api.mutations import mutation
-from src.api.queries import query
+from src.api.typedefs import type_defs
 
 
-type_defs = gql("""
-    type Query {
-        hello: String!
-    }
-
-    type Mutation {
-        setMessageHello(
-            message: String!
-        ): String!
-    }
-""")
-
-schema = make_executable_schema(type_defs, query, mutation)
+schema = make_executable_schema(
+    type_defs,
+    query,
+    mutation,
+    user_type,
+    auth_payload_type,
+    convert_names_case=True,
+)
