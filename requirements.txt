@@ -1,5 +1,6 @@
 ariadne==0.26.1
 dotenv~=0.9.9
+graphql-core==3.2.5
 starlette==0.46.1
 uvicorn==0.34.0
 uvloop==0.21.0
