@@ -8,6 +8,6 @@ if __name__ == '__main__':
         'src.main:app',
         host='0.0.0.0',
         port=8000,
-        reload=configs.DEV,
+        reload=configs.IS_DEV,
         loop='uvloop',
     )

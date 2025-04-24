@@ -1,4 +1,4 @@
 from .env_base import *  # noqa: F401, F403
 
 
-DEV: bool = True
+IS_DEV: bool = True

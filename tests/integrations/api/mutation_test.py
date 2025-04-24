@@ -1,36 +1,40 @@
+from pytest import mark
+
 from src.api.constants import (
     ENDPOINT_NAME,
     ErrorTypeEnum,
 )
+from src.models import User
 
 
 mutation = """
-        mutation CreateUser(
-            $name: String!,
-            $lastName: String!,
-            $username: String!,
-            $email: String!,
-            $mobilePhone: String!,
-            $password: String!
-        ) {
-            createUser(
-                name: $name,
-                lastName: $lastName,
-                username: $username,
-                email: $email,
-                mobilePhone: $mobilePhone,
-                password: $password
-            ) {
-                user {
-                    id
-                    username
-                }
-            }
+mutation CreateUser(
+    $name: String!,
+    $lastName: String!,
+    $username: String!,
+    $email: String!,
+    $mobilePhone: String!,
+    $password: String!
+) {
+    createUser(
+        name: $name,
+        lastName: $lastName,
+        username: $username,
+        email: $email,
+        mobilePhone: $mobilePhone,
+        password: $password
+    ) {
+        user {
+            id
+            username
         }
-    """
+    }
+}
+"""
 
 
-def test_create_user_success(client_api):
+@mark.asyncio
+async def test_create_user_success(client_api, initialize_db, default_user_registration_constructor):
     variables = {
         'name': 'jon',
         'lastName': 'smith',
@@ -40,12 +44,8 @@ def test_create_user_success(client_api):
         'password': 'password.example',
     }
 
-    response = client_api.post(
-        ENDPOINT_NAME,
-        json={'query': mutation, 'variables': variables},
-    )
+    response = client_api.post(ENDPOINT_NAME, json={'query': mutation, 'variables': variables})
     data_json = response.json()
-
     assert data_json == {
         'data': {
             'createUser': {
@@ -56,6 +56,14 @@ def test_create_user_success(client_api):
             },
         },
     }
+
+    user_created = await User.get(id=data_json['data']['createUser']['user']['id'])
+    assert user_created.name == variables['name']
+    assert user_created.last_name == variables['lastName']
+    assert user_created.username == variables['username']
+    assert user_created.email == variables['email']
+    assert user_created.mobile_phone == variables['mobilePhone']
+    assert user_created.password == variables['password']
 
 
 def test_create_user_error_with_null_data(client_api):
@@ -68,12 +76,8 @@ def test_create_user_error_with_null_data(client_api):
         'password': None,
     }
 
-    response = client_api.post(
-        ENDPOINT_NAME,
-        json={'query': mutation, 'variables': variables},
-    )
+    response = client_api.post(ENDPOINT_NAME, json={'query': mutation, 'variables': variables})
     data_json = response.json()
-
     assert data_json == {
         'data': None,
         'errors': [
@@ -115,12 +119,8 @@ def test_create_user_error_with_empty_fields(client_api):
         'password': '',
     }
 
-    response = client_api.post(
-        ENDPOINT_NAME,
-        json={'query': mutation, 'variables': variables},
-    )
+    response = client_api.post(ENDPOINT_NAME, json={'query': mutation, 'variables': variables})
     data_json = response.json()
-
     assert data_json == {
         'data': {
             'createUser': None,
