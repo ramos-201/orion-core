@@ -1,6 +1,6 @@
 from pytest import mark
 
-from src.api.constants import (
+from src.constants import (
     ENDPOINT_NAME,
     ErrorTypeEnum,
 )
@@ -34,7 +34,7 @@ mutation CreateUser(
 
 
 @mark.asyncio
-async def test_create_user_success(client_api, initialize_db, default_user_registration_constructor):
+async def test_create_user_success(client_api, initialize_db):
     variables = {
         'name': 'jon',
         'lastName': 'smith',
@@ -43,8 +43,8 @@ async def test_create_user_success(client_api, initialize_db, default_user_regis
         'mobilePhone': '3111111111',
         'password': 'password.example',
     }
-
     response = client_api.post(ENDPOINT_NAME, json={'query': mutation, 'variables': variables})
+
     data_json = response.json()
     assert data_json == {
         'data': {
@@ -66,7 +66,7 @@ async def test_create_user_success(client_api, initialize_db, default_user_regis
     assert user_created.password == variables['password']
 
 
-def test_create_user_error_with_null_data(client_api):
+def test_create_user_fails_with_null_data(client_api):
     variables = {
         'name': None,
         'lastName': None,
@@ -75,8 +75,8 @@ def test_create_user_error_with_null_data(client_api):
         'mobilePhone': None,
         'password': None,
     }
-
     response = client_api.post(ENDPOINT_NAME, json={'query': mutation, 'variables': variables})
+
     data_json = response.json()
     assert data_json == {
         'data': None,
@@ -109,7 +109,7 @@ def test_create_user_error_with_null_data(client_api):
     }
 
 
-def test_create_user_error_with_empty_fields(client_api):
+def test_create_user_fails_with_empty_fields(client_api):
     variables = {
         'name': '',
         'lastName': '',
@@ -118,8 +118,8 @@ def test_create_user_error_with_empty_fields(client_api):
         'mobilePhone': '',
         'password': '',
     }
-
     response = client_api.post(ENDPOINT_NAME, json={'query': mutation, 'variables': variables})
+
     data_json = response.json()
     assert data_json == {
         'data': {
@@ -129,7 +129,34 @@ def test_create_user_error_with_empty_fields(client_api):
             {
                 'error_type': ErrorTypeEnum.EMPTY_DATA_ERROR.value,
                 'message': 'The following fields cannot be empty: [name, last_name, username, email, '
-                           'mobile_phone, password]',
+                           'mobile_phone, password].',
+            },
+        ],
+    }
+
+
+@mark.asyncio
+async def test_create_user_fails_when_duplicated_data(client_api, initialize_db, default_user_registration_constructor):
+    created_user = await default_user_registration_constructor
+    variables = {
+        'name': created_user.name,
+        'lastName': created_user.last_name,
+        'username': created_user.username,
+        'email': created_user.email,
+        'mobilePhone': created_user.mobile_phone,
+        'password': created_user.password,
+    }
+    response = client_api.post(ENDPOINT_NAME, json={'query': mutation, 'variables': variables})
+
+    data_json = response.json()
+    assert data_json == {
+        'data': {
+            'createUser': None,
+        },
+        'errors': [
+            {
+                'error_type': 'DUPLICATE_FIELD_ERROR',
+                'message': 'The data for the field mobile_phone already exists.',
             },
         ],
     }

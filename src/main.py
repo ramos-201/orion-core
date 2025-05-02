@@ -16,11 +16,11 @@ from configs import (
     DB_USER,
     IS_DEV,
 )
-from src.api.constants import (
+from src.api.schemas import schema
+from src.constants import (
     ENDPOINT_NAME,
     ErrorTypeEnum,
 )
-from src.api.schemas import schema
 
 
 async def graphql_endpoint(request: Request):
