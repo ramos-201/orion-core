@@ -1,6 +1,19 @@
 from ariadne import gql
 
 
+user_type_def = """
+type User {
+    id: String!
+    username: String!
+}
+"""
+
+auth_payload_type_def = """
+type AuthPayload {
+    user: User
+}
+"""
+
 query_type_def = """
 type Query {
     _empty: String
@@ -17,19 +30,11 @@ type Mutation {
         mobilePhone: String!,
         password: String!
     ): AuthPayload
-}
-"""
 
-user_type_def = """
-type User {
-    id: String!
-    username: String!
-}
-"""
-
-auth_payload_type_def = """
-type AuthPayload {
-    user: User
+    login(
+        user: String!,
+        password: String!
+    ): AuthPayload
 }
 """
 

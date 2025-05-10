@@ -122,16 +122,12 @@ def test_create_user_fails_with_empty_fields(client_api):
 
     data_json = response.json()
     assert data_json == {
-        'data': {
-            'createUser': None,
-        },
-        'errors': [
-            {
-                'error_type': ErrorTypeEnum.EMPTY_DATA_ERROR.value,
-                'message': 'The following fields cannot be empty: [name, last_name, username, email, '
-                           'mobile_phone, password].',
-            },
-        ],
+        'data': {'createUser': None},
+        'errors': [{
+            'error_type': ErrorTypeEnum.EMPTY_DATA_ERROR.value,
+            'message': 'The following fields cannot be empty: [name, last_name, username, email, '
+                       'mobile_phone, password].',
+        }],
     }
 
 
@@ -150,13 +146,9 @@ async def test_create_user_fails_when_duplicated_data(client_api, initialize_db,
 
     data_json = response.json()
     assert data_json == {
-        'data': {
-            'createUser': None,
-        },
-        'errors': [
-            {
-                'error_type': 'DUPLICATE_FIELD_ERROR',
-                'message': 'The data for the field mobile_phone already exists.',
-            },
-        ],
+        'data': {'createUser': None},
+        'errors': [{
+            'error_type': ErrorTypeEnum.DUPLICATE_FIELD_ERROR.value,
+            'message': 'The data for the field mobile_phone already exists.',
+        }],
     }

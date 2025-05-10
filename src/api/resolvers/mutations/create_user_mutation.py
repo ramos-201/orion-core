@@ -1,13 +1,7 @@
-from ariadne import MutationType
-
 from src.controllers.user_controller import UserController
 from src.utils import validate_required_data
 
 
-mutation = MutationType()
-
-
-@mutation.field('createUser')
 async def resolve_create_user(
         _, info,
         name: str,
@@ -42,6 +36,3 @@ async def resolve_create_user(
     }
 
     return {'user': user_result}
-
-
-__all__ = ['mutation']
