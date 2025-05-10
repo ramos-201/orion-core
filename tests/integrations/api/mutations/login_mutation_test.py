@@ -26,15 +26,15 @@ mutation login(
 
 @mark.asyncio
 @mark.parametrize(
-    'user', (
-        'john.smith',
-        'john.smith@example.com',
+    'user_field', (
+        'email',
+        'username',
     ),
 )
-async def test_login_success(client_api, initialize_db, default_user_registration_constructor, user):
+async def test_login_success(client_api, initialize_db, default_user_registration_constructor, user_field):
     created_user = await default_user_registration_constructor
     variables = {
-        'user': user,
+        'user': getattr(created_user, user_field),
         'password': created_user.password,
     }
     response = client_api.post(ENDPOINT_NAME, json={'query': mutation, 'variables': variables})
@@ -94,21 +94,21 @@ def test_login_fails_with_empty_fields(client_api):
 
 @mark.asyncio
 @mark.parametrize(
-    'password, user', (
-        ('password.example', 'username_not_exist'),
-        ('wrong_password', 'username_not_exist'),
-        ('wrong_password', 'john.smith'),
-        ('wrong_password', 'john.smith@example.com'),
+    'field_password, field_user', (
+        ('password', ''),
+        ('', 'username'),
+        ('', 'email'),
+        ('', ''),
     ),
 )
 async def test_fails_due_to_invalid_credentials(
     client_api, initialize_db, default_user_registration_constructor,
-    password, user,
+    field_password, field_user,
 ):
     created_user = await default_user_registration_constructor
     variables = {
-        'user': 'user_no_exist',
-        'password': created_user.password,
+        'user': getattr(created_user, field_user, None) or 'user_not_exist',
+        'password': getattr(created_user, field_password, None) or 'wrong_password',
     }
     response = client_api.post(ENDPOINT_NAME, json={'query': mutation, 'variables': variables})
 
