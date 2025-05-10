@@ -94,21 +94,21 @@ def test_login_fails_with_empty_fields(client_api):
 
 @mark.asyncio
 @mark.parametrize(
-    'field_password, field_user', (
-        ('password', ''),
-        ('', 'username'),
-        ('', 'email'),
-        ('', ''),
+    'password_field, user_field', (
+        ('password', 'non-existent_field'),
+        ('non-existent_field', 'username'),
+        ('non-existent_field', 'email'),
+        ('non-existent_field', 'non-existent_field'),
     ),
 )
 async def test_fails_due_to_invalid_credentials(
     client_api, initialize_db, default_user_registration_constructor,
-    field_password, field_user,
+    password_field, user_field,
 ):
     created_user = await default_user_registration_constructor
     variables = {
-        'user': getattr(created_user, field_user, None) or 'user_not_exist',
-        'password': getattr(created_user, field_password, None) or 'wrong_password',
+        'user': getattr(created_user, user_field, 'user_not_exist'),
+        'password': getattr(created_user, password_field, 'wrong_password'),
     }
     response = client_api.post(ENDPOINT_NAME, json={'query': mutation, 'variables': variables})
 
