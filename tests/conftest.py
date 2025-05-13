@@ -28,3 +28,21 @@ async def default_user_registration_constructor():
     user = await UserFactory.build()
     await user.save()
     return user
+
+
+@fixture
+def get_default_token_mock(monkeypatch):
+    token_mock = 'token_example.mock'
+    monkeypatch.setattr(
+        'src.api.resolvers.mutations.login_mutation.create_access_token',
+        lambda user_id: token_mock,
+    )
+    return token_mock
+
+
+@fixture
+def patch_expired_token(monkeypatch):
+    monkeypatch.setattr(
+        'src.utils.jwt_handler.ACCESS_TOKEN_EXPIRE_MINUTES_TOKEN',
+        '-1',
+    )

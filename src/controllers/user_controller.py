@@ -36,3 +36,6 @@ class UserController:
             Q(email=user) | Q(username=user),
             password=password,
         )
+
+    def get_dict(self, user):
+        return user.__dict__()

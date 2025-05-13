@@ -19,6 +19,7 @@ mutation login(
             id
             username
         }
+        token
     }
 }
 """
@@ -31,8 +32,11 @@ mutation login(
         'username',
     ),
 )
-async def test_login_success(client_api, initialize_db, default_user_registration_constructor, user_field):
+async def test_login_success(
+        client_api, initialize_db, default_user_registration_constructor, user_field, get_default_token_mock,
+):
     created_user = await default_user_registration_constructor
+
     variables = {
         'user': getattr(created_user, user_field),
         'password': created_user.password,
@@ -43,6 +47,7 @@ async def test_login_success(client_api, initialize_db, default_user_registratio
     assert data_json == {
         'data': {
             'login': {
+                'token': get_default_token_mock,
                 'user': {
                     'id': str(created_user.id),
                     'username': created_user.username,
@@ -95,17 +100,17 @@ def test_login_fails_with_empty_fields(client_api):
 @mark.asyncio
 @mark.parametrize(
     'password_field, user_field', (
-        ('password', 'non-existent_field'),
-        ('non-existent_field', 'username'),
-        ('non-existent_field', 'email'),
-        ('non-existent_field', 'non-existent_field'),
+        ('password', '__not_found__'),
+        ('__not_found__', 'username'),
+        ('__not_found__', 'email'),
+        ('__not_found__', '__not_found__'),
     ),
 )
 async def test_fails_due_to_invalid_credentials(
-    client_api, initialize_db, default_user_registration_constructor,
-    password_field, user_field,
+    client_api, initialize_db, default_user_registration_constructor, password_field, user_field,
 ):
     created_user = await default_user_registration_constructor
+
     variables = {
         'user': getattr(created_user, user_field, 'user_not_exist'),
         'password': getattr(created_user, password_field, 'wrong_password'),

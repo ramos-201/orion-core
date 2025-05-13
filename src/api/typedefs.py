@@ -9,8 +9,13 @@ type User {
 """
 
 auth_payload_type_def = """
+type UserPayload {
+    user: User!
+}
+
 type AuthPayload {
-    user: User
+    user: User!
+    token: String!
 }
 """
 
@@ -29,7 +34,7 @@ type Mutation {
         email: String!,
         mobilePhone: String!,
         password: String!
-    ): AuthPayload
+    ): UserPayload
 
     login(
         user: String!,

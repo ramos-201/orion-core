@@ -1,5 +1,6 @@
+from src.api.resolvers.schemas.user_schema import user_to_dict
 from src.controllers.user_controller import UserController
-from src.utils import validate_required_data
+from src.utils.validate_data import validate_required_data
 
 
 async def resolve_create_user(
@@ -30,9 +31,4 @@ async def resolve_create_user(
         password=password,
     )
 
-    user_result = {
-        'id': user_created.id,
-        'username': user_created.username,
-    }
-
-    return {'user': user_result}
+    return {'user': user_to_dict(user=user_created)}
