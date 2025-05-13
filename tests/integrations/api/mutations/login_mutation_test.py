@@ -32,9 +32,13 @@ mutation login(
         'username',
     ),
 )
-async def test_login_success(
-        client_api, initialize_db, default_user_registration_constructor, user_field, get_default_token_mock,
-):
+async def test_login_success(client_api, initialize_db, default_user_registration_constructor, user_field, monkeypatch):
+    token_mock = 'token_example.mock'
+    monkeypatch.setattr(
+        'src.api.resolvers.mutations.login_mutation.create_access_token',
+        lambda user_id: token_mock,
+    )
+
     created_user = await default_user_registration_constructor
 
     variables = {
@@ -47,7 +51,7 @@ async def test_login_success(
     assert data_json == {
         'data': {
             'login': {
-                'token': get_default_token_mock,
+                'token': token_mock,
                 'user': {
                     'id': str(created_user.id),
                     'username': created_user.username,

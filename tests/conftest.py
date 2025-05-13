@@ -32,12 +32,7 @@ async def default_user_registration_constructor():
 
 @fixture
 def get_default_token_mock(monkeypatch):
-    token_mock = 'token_example.mock'
-    monkeypatch.setattr(
-        'src.api.resolvers.mutations.login_mutation.create_access_token',
-        lambda user_id: token_mock,
-    )
-    return token_mock
+    return
 
 
 @fixture
