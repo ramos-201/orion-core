@@ -1,14 +1,19 @@
 from ariadne import gql
 
 
-user_type_def = """
+schema_type_def = """
 type User {
     id: String!
     username: String!
 }
+
+type Process {
+    id: String!
+    name: String!
+}
 """
 
-auth_payload_type_def = """
+payload_type_def = """
 type UserPayload {
     user: User!
 }
@@ -16,6 +21,10 @@ type UserPayload {
 type AuthPayload {
     user: User!
     token: String!
+}
+
+type ProcessPayload {
+    process: Process!
 }
 """
 
@@ -40,9 +49,14 @@ type Mutation {
         user: String!,
         password: String!
     ): AuthPayload
+
+    createProcess(
+        name: String!
+        description: String!
+    ): ProcessPayload
 }
 """
 
-type_defs = gql(query_type_def + mutation_type_def + user_type_def + auth_payload_type_def)
+type_defs = gql(query_type_def + mutation_type_def + schema_type_def + payload_type_def)
 
 __all__ = ['type_defs']

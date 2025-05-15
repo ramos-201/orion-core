@@ -1,4 +1,4 @@
-from src.api.resolvers.schemas.user_schema import user_to_dict
+from src.api.resolvers.payload import user_to_dict
 from src.constants import ErrorTypeEnum
 from src.controllers.user_controller import UserController
 from src.exceptions import MutationError

@@ -51,7 +51,7 @@ async def test_create_user_success(client_api, initialize_db):
             'createUser': {
                 'user': {
                     'id': '1',
-                    'username': 'jon.smith',
+                    'username': variables['username'],
                 },
             },
         },
