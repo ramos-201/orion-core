@@ -5,9 +5,9 @@ from src.utils.validate_data import validate_required_data
 
 
 async def resolve_create_process(
-        _, info,
-        name: str,
-        description: STR_OR_NONE = None,
+    _, info,
+    name: str,
+    description: STR_OR_NONE = None,
 ):
     validate_required_data(name=name)
 

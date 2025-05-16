@@ -7,9 +7,9 @@ from src.utils.validate_data import validate_required_data
 
 
 async def resolve_login(
-        _, info,
-        user: str,
-        password: str,
+    _, info,
+    user: str,
+    password: str,
 ) -> dict:
     validate_required_data(
         user=user,

@@ -41,11 +41,6 @@ async def default_process_registration_constructor():
 
 
 @fixture
-def get_default_token_mock(monkeypatch):
-    return
-
-
-@fixture
 def patch_expired_token(monkeypatch):
     monkeypatch.setattr(
         'src.utils.jwt_handler.ACCESS_TOKEN_EXPIRE_MINUTES_TOKEN',

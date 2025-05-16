@@ -9,13 +9,13 @@ class UserController(BaseController):
         super().__init__(model=User)
 
     async def create_user(
-            self,
-            name,
-            last_name,
-            username,
-            email,
-            mobile_phone,
-            password,
+        self,
+        name,
+        last_name,
+        username,
+        email,
+        mobile_phone,
+        password,
     ) -> 'User':
         return await self._create(
             name=name,
@@ -26,7 +26,11 @@ class UserController(BaseController):
             password=password,
         )
 
-    async def get_user_by_credentials(self, user, password) -> 'User':
+    async def get_user_by_credentials(
+        self,
+        user,
+        password,
+    ) -> 'User':
         return await self._get_or_none(
             Q(email=user) |
             Q(username=user),

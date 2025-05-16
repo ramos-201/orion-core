@@ -4,13 +4,13 @@ from src.utils.validate_data import validate_required_data
 
 
 async def resolve_create_user(
-        _, info,
-        name: str,
-        last_name: str,
-        username: str,
-        email: str,
-        mobile_phone: str,
-        password: str,
+    _, info,
+    name: str,
+    last_name: str,
+    username: str,
+    email: str,
+    mobile_phone: str,
+    password: str,
 ) -> dict:
     validate_required_data(
         name=name,

@@ -7,9 +7,9 @@ class ProcessController(BaseController):
         super().__init__(model=Process)
 
     async def create_process(
-            self,
-            name,
-            description,
+        self,
+        name,
+        description,
     ) -> 'Process':
         return await self._create(
             name=name,
