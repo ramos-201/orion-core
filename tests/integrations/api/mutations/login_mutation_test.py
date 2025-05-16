@@ -37,11 +37,9 @@ async def test_login_success(client_api, initialize_db, default_user_registratio
         lambda user_id: token_mock,
     )
 
-    created_user = await default_user_registration_constructor
-
     variables = {
-        'user': getattr(created_user, user_field),
-        'password': created_user.password,
+        'user': getattr(default_user_registration_constructor, user_field),
+        'password': default_user_registration_constructor.password,
     }
     response = client_api.post(ENDPOINT_NAME, json={'query': mutation, 'variables': variables})
 
@@ -51,8 +49,8 @@ async def test_login_success(client_api, initialize_db, default_user_registratio
             'login': {
                 'token': token_mock,
                 'user': {
-                    'id': str(created_user.id),
-                    'username': created_user.username,
+                    'id': str(default_user_registration_constructor.id),
+                    'username': default_user_registration_constructor.username,
                 },
             },
         },
@@ -111,11 +109,9 @@ def test_login_fails_with_empty_fields(client_api):
 async def test_fails_due_to_invalid_credentials(
     client_api, initialize_db, default_user_registration_constructor, password_field, user_field,
 ):
-    created_user = await default_user_registration_constructor
-
     variables = {
-        'user': getattr(created_user, user_field, 'user_not_exist'),
-        'password': getattr(created_user, password_field, 'wrong_password'),
+        'user': getattr(default_user_registration_constructor, user_field, 'user_not_exist'),
+        'password': getattr(default_user_registration_constructor, password_field, 'wrong_password'),
     }
     response = client_api.post(ENDPOINT_NAME, json={'query': mutation, 'variables': variables})
 

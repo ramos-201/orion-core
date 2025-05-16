@@ -5,6 +5,9 @@ from src.constants import ErrorTypeEnum
 from src.models import Process
 
 
+# TODO: test, cada usuario debe tener sus propios procesos y no deberia afectar el flujo de otro usuario.
+
+
 mutation = """
 mutation CreateProcess(
     $name: String!,
@@ -22,21 +25,30 @@ mutation CreateProcess(
 }
 """
 
+this_is_description = 'this is a example description.'
+
 
 @mark.asyncio
 @mark.parametrize(
-    'description_variable', [
+    'description_variables', [
         'this is a example description.',
         '',
         None,
     ],
 )
-async def test_create_process_success(client_api, initialize_db, description_variable):
+async def test_create_process_success(
+        client_api, initialize_db, get_authenticated_headers, default_user_registration_constructor,
+        description_variables,
+):
     variables = {
         'name': 'process_example',
-        'description': description_variable,
+        'description': description_variables,
     }
-    response = client_api.post(ENDPOINT_NAME, json={'query': mutation, 'variables': variables})
+    response = client_api.post(
+        ENDPOINT_NAME,
+        json={'query': mutation, 'variables': variables},
+        headers=get_authenticated_headers,
+    )
 
     data_json = response.json()
     assert data_json == {
@@ -53,6 +65,117 @@ async def test_create_process_success(client_api, initialize_db, description_var
     process_created = await Process.get(id=data_json['data']['createProcess']['process']['id'])
     assert process_created.name == variables['name']
     assert process_created.description == variables['description']
+    assert await process_created.user == default_user_registration_constructor
+
+
+@mark.asyncio
+async def test_create_processes_success(
+        client_api, initialize_db, get_authenticated_headers, default_user_registration_constructor,
+):
+    variables_process_1 = {
+        'name': 'process_example_1',
+        'description': this_is_description,
+    }
+    _ = client_api.post(
+        ENDPOINT_NAME,
+        json={'query': mutation, 'variables': variables_process_1},
+        headers=get_authenticated_headers,
+    )
+
+    variables_process_2 = {
+        'name': 'process_example_2',
+        'description': this_is_description,
+    }
+    _ = client_api.post(
+        ENDPOINT_NAME,
+        json={'query': mutation, 'variables': variables_process_2},
+        headers=get_authenticated_headers,
+    )
+
+    processes = await Process.filter(user_id=default_user_registration_constructor.id).count()
+    assert processes == 2
+
+
+expected_result_unauthorized_error = {
+    'data': {'createProcess': None},
+    'errors': [{
+        'error_type': ErrorTypeEnum.UNAUTHORIZED_ERROR.value,
+        'message': 'The authentication has expired or is invalid.',
+    }],
+}
+
+
+def test_create_process_fail_when_not_authorized(client_api):
+    variables = {
+        'name': 'process_example',
+        'description': this_is_description,
+    }
+    response = client_api.post(
+        ENDPOINT_NAME,
+        json={'query': mutation, 'variables': variables},
+        headers={},
+    )
+
+    data_json = response.json()
+    assert data_json == expected_result_unauthorized_error
+
+
+@mark.asyncio
+def test_create_process_fail_when_expired_token(
+        client_api, initialize_db, patch_expired_token, get_authenticated_headers,
+):
+    variables = {
+        'name': 'process_example',
+        'description': this_is_description,
+    }
+    response = client_api.post(
+        ENDPOINT_NAME,
+        json={'query': mutation, 'variables': variables},
+        headers=get_authenticated_headers,
+    )
+
+    data_json = response.json()
+    assert data_json == expected_result_unauthorized_error
+
+
+@mark.asyncio
+def test_create_process_fail_when_null_token(client_api, initialize_db):
+    variables = {
+        'name': 'process_example',
+        'description': this_is_description,
+    }
+    response = client_api.post(
+        ENDPOINT_NAME,
+        json={'query': mutation, 'variables': variables},
+        headers={'Authorization': 'Bearer '},
+    )
+
+    data_json = response.json()
+    assert data_json == expected_result_unauthorized_error
+
+
+@mark.asyncio
+def test_create_process_fail_when_invalid_token(
+        client_api, initialize_db,
+):
+    variables = {
+        'name': 'process_example',
+        'description': this_is_description,
+    }
+    response = client_api.post(
+        ENDPOINT_NAME,
+        json={'query': mutation, 'variables': variables},
+        headers={'Authorization': 'Bearer invalid_token'},
+    )
+
+    data_json = response.json()
+    assert data_json == {
+        'data': {'createProcess': None},
+        'errors': [{
+            'error_type': ErrorTypeEnum.UNAUTHORIZED_ERROR.value,
+            'message': 'The authentication has expired or is invalid.',
+        }],
+    }
 
 
 def test_create_process_fails_with_null_data(client_api):
@@ -60,7 +183,11 @@ def test_create_process_fails_with_null_data(client_api):
         'name': None,
         'description': None,
     }
-    response = client_api.post(ENDPOINT_NAME, json={'query': mutation, 'variables': variables})
+    response = client_api.post(
+        ENDPOINT_NAME,
+        json={'query': mutation, 'variables': variables},
+        headers={},
+    )
 
     data_json = response.json()
     assert data_json == {
@@ -72,12 +199,17 @@ def test_create_process_fails_with_null_data(client_api):
     }
 
 
-def test_create_process_fails_with_empty_fields(client_api):
+@mark.asyncio
+async def test_create_process_fails_with_empty_fields(client_api, initialize_db, get_authenticated_headers):
     variables = {
         'name': '',
         'description': '',
     }
-    response = client_api.post(ENDPOINT_NAME, json={'query': mutation, 'variables': variables})
+    response = client_api.post(
+        ENDPOINT_NAME,
+        json={'query': mutation, 'variables': variables},
+        headers=get_authenticated_headers,
+    )
 
     data_json = response.json()
     assert data_json == {
@@ -91,15 +223,17 @@ def test_create_process_fails_with_empty_fields(client_api):
 
 @mark.asyncio
 async def test_create_process_fails_when_duplicated_data(
-        client_api, initialize_db, default_process_registration_constructor,
+        client_api, initialize_db, get_authenticated_headers, default_process_registration_constructor,
 ):
-    created_process = await default_process_registration_constructor
-
     variables = {
-        'name': created_process.name,
-        'description': created_process.description,
+        'name': default_process_registration_constructor.name,
+        'description': default_process_registration_constructor.description,
     }
-    response = client_api.post(ENDPOINT_NAME, json={'query': mutation, 'variables': variables})
+    response = client_api.post(
+        ENDPOINT_NAME,
+        json={'query': mutation, 'variables': variables},
+        headers=get_authenticated_headers,
+    )
 
     data_json = response.json()
     assert data_json == {

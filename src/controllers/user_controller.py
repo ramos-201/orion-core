@@ -10,12 +10,12 @@ class UserController(BaseController):
 
     async def create_user(
         self,
-        name,
-        last_name,
-        username,
-        email,
-        mobile_phone,
-        password,
+        name: str,
+        last_name: str,
+        username: str,
+        email: str,
+        mobile_phone: str,
+        password: str,
     ) -> 'User':
         return await self._create(
             name=name,
@@ -36,3 +36,6 @@ class UserController(BaseController):
             Q(username=user),
             password=password,
         )
+
+    async def get_user_by_id(self, user_id):
+        return await self._get_or_none(id=user_id)

@@ -1,9 +1,11 @@
 from src.api.resolvers.payload import process_to_dict
 from src.constants import STR_OR_NONE
 from src.controllers.process_controller import ProcessController
+from src.utils.auth_decorators import login_required
 from src.utils.validate_data import validate_required_data
 
 
+@login_required
 async def resolve_create_process(
     _, info,
     name: str,
@@ -15,6 +17,7 @@ async def resolve_create_process(
     process = await process_controller.create_process(
         name=name,
         description=description,
+        user=info.context['user'],
     )
 
     return {'process': process_to_dict(process=process)}

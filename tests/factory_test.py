@@ -1,4 +1,7 @@
-from factory import Factory
+from factory import (
+    Factory,
+    SubFactory,
+)
 
 from src.models import (
     Process,
@@ -10,7 +13,6 @@ class UserFactory(Factory):
     class Meta:
         model = User
 
-    id = '1'
     created_at = '2025-01-01'
     modified_at = '2025-01-01'
     name = 'John'
@@ -25,8 +27,8 @@ class ProcessFactory(Factory):
     class Meta:
         model = Process
 
-    id = '1'
     created_at = '2025-01-01'
     modified_at = '2025-01-01'
+    user = SubFactory(UserFactory)
     name = 'process_example'
     description = 'this is a example description.'

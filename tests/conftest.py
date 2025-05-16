@@ -4,6 +4,7 @@ from starlette.testclient import TestClient
 from tortoise import Tortoise
 
 from src.main import app
+from src.utils.jwt_handler import create_access_token
 from tests.factory_test import (
     ProcessFactory,
     UserFactory,
@@ -26,16 +27,23 @@ async def initialize_db():
     await Tortoise.close_connections()
 
 
-@fixture
+@pytest_asyncio.fixture
 async def default_user_registration_constructor():
     user = await UserFactory.build()
     await user.save()
     return user
 
 
-@fixture
-async def default_process_registration_constructor():
-    process = await ProcessFactory.build()
+@pytest_asyncio.fixture
+async def get_authenticated_headers(default_user_registration_constructor, monkeypatch):
+    # Authenticates with the `login` mutation.
+    token = create_access_token(user_id=default_user_registration_constructor.id)
+    return {'Authorization': f'Bearer {token}'}
+
+
+@pytest_asyncio.fixture
+async def default_process_registration_constructor(default_user_registration_constructor):
+    process = await ProcessFactory.build(user=default_user_registration_constructor)
     await process.save()
     return process
 

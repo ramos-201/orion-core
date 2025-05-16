@@ -131,15 +131,13 @@ def test_create_user_fails_with_empty_fields(client_api):
 
 @mark.asyncio
 async def test_create_user_fails_when_duplicated_data(client_api, initialize_db, default_user_registration_constructor):
-    created_user = await default_user_registration_constructor
-
     variables = {
-        'name': created_user.name,
-        'lastName': created_user.last_name,
-        'username': created_user.username,
-        'email': created_user.email,
-        'mobilePhone': created_user.mobile_phone,
-        'password': created_user.password,
+        'name': default_user_registration_constructor.name,
+        'lastName': default_user_registration_constructor.last_name,
+        'username': default_user_registration_constructor.username,
+        'email': default_user_registration_constructor.email,
+        'mobilePhone': default_user_registration_constructor.mobile_phone,
+        'password': default_user_registration_constructor.password,
     }
     response = client_api.post(ENDPOINT_NAME, json={'query': mutation, 'variables': variables})
 
