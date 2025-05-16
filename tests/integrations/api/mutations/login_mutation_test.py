@@ -1,9 +1,7 @@
 from pytest import mark
 
-from src.constants import (
-    ENDPOINT_NAME,
-    ErrorTypeEnum,
-)
+from configs import ENDPOINT_NAME
+from src.constants import ErrorTypeEnum
 
 
 mutation = """

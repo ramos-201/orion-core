@@ -1,16 +1,17 @@
+from src.controllers.base_controller import BaseController
 from src.models import Process
 
 
-class ProcessController:
+class ProcessController(BaseController):
     def __init__(self):
-        self._model = Process
+        super().__init__(model=Process)
 
     async def create_process(
             self,
             name,
             description,
     ) -> 'Process':
-        return await self._model.create(
+        return await self._create(
             name=name,
             description=description,
         )

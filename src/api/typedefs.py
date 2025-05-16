@@ -52,7 +52,7 @@ type Mutation {
 
     createProcess(
         name: String!
-        description: String!
+        description: String
     ): ProcessPayload
 }
 """

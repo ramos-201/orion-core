@@ -14,13 +14,11 @@ from configs import (
     DB_PORT,
     DB_URL,
     DB_USER,
+    ENDPOINT_NAME,
     IS_DEV,
 )
 from src.api.schemas import schema
-from src.constants import (
-    ENDPOINT_NAME,
-    ErrorTypeEnum,
-)
+from src.constants import ErrorTypeEnum
 from src.utils.jwt_handler import decode_access_token
 
 

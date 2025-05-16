@@ -1,7 +1,8 @@
 from enum import Enum
+from typing import Optional
 
 
-ENDPOINT_NAME = '/graphql'
+STR_OR_NONE = Optional[str]
 
 
 class ErrorTypeEnum(Enum):
