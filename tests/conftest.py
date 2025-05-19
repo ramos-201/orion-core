@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytest_asyncio
 from pytest import fixture
 from starlette.testclient import TestClient
@@ -54,3 +56,10 @@ def patch_expired_token(monkeypatch):
         'src.utils.jwt_handler.ACCESS_TOKEN_EXPIRE_MINUTES_TOKEN',
         '-1',
     )
+
+
+@fixture
+def get_patch_datetime_model(mocker):
+    default_datetime = datetime(2025, 1, 1, 12, 0, 0)
+    mocker.patch('tortoise.timezone.now', return_value=default_datetime)
+    return default_datetime.strftime('%Y-%m-%d %H:%M:%S')

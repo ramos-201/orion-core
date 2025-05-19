@@ -16,6 +16,9 @@ mutation login(
         user {
             id
             username
+            name
+            email
+            mobilePhone
         }
         token
     }
@@ -51,6 +54,9 @@ async def test_login_success(client_api, initialize_db, default_user_registratio
                 'user': {
                     'id': str(default_user_registration_constructor.id),
                     'username': default_user_registration_constructor.username,
+                    'name': default_user_registration_constructor.name,
+                    'email': default_user_registration_constructor.email,
+                    'mobilePhone': default_user_registration_constructor.mobile_phone,
                 },
             },
         },

@@ -5,11 +5,17 @@ schema_type_def = """
 type User {
     id: String!
     username: String!
+    name: String!
+    email: String!
+    mobilePhone: String!
 }
 
 type Process {
     id: String!
+    createdAt: String!
+    modifiedAt: String!
     name: String!
+    description: String
 }
 """
 

@@ -25,6 +25,9 @@ mutation CreateUser(
         user {
             id
             username
+            name
+            email
+            mobilePhone
         }
     }
 }
@@ -50,6 +53,9 @@ async def test_create_user_success(client_api, initialize_db):
                 'user': {
                     'id': '1',
                     'username': variables['username'],
+                    'name': variables['name'],
+                    'email': variables['email'],
+                    'mobilePhone': variables['mobilePhone'],
                 },
             },
         },

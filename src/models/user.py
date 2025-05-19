@@ -4,6 +4,9 @@ from tortoise import (
 )
 
 
+# TODO: activate, desactivate user user.
+# TODO: rol?
+
 class User(models.Model):
     id = fields.IntField(pk=True, auto=True)
     created_at = fields.DatetimeField(auto_now_add=True)

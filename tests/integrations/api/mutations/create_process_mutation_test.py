@@ -20,6 +20,10 @@ mutation CreateProcess(
         process {
             id
             name
+            createdAt
+            modifiedAt
+            name
+            description
         }
     }
 }
@@ -38,7 +42,7 @@ this_is_description = 'this is a example description.'
 )
 async def test_create_process_success(
         client_api, initialize_db, get_authenticated_headers, default_user_registration_constructor,
-        description_variables,
+        get_patch_datetime_model, description_variables,
 ):
     variables = {
         'name': 'process_example',
@@ -57,6 +61,9 @@ async def test_create_process_success(
                 'process': {
                     'id': '1',
                     'name': variables['name'],
+                    'createdAt': get_patch_datetime_model,
+                    'modifiedAt': get_patch_datetime_model,
+                    'description': variables['description'],
                 },
             },
         },
