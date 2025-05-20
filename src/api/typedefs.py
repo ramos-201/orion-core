@@ -3,18 +3,18 @@ from ariadne import gql
 
 schema_type_def = """
 type User {
-    id: String!
-    username: String!
-    name: String!
-    email: String!
-    mobilePhone: String!
+    id: String
+    username: String
+    name: String
+    email: String
+    mobilePhone: String
 }
 
 type Process {
-    id: String!
-    createdAt: String!
-    modifiedAt: String!
-    name: String!
+    id: String
+    createdAt: String
+    modifiedAt: String
+    name: String
     description: String
 }
 """
@@ -36,7 +36,7 @@ type ProcessPayload {
 
 query_type_def = """
 type Query {
-    _empty: String
+    process(id: String!): Process
 }
 """
 

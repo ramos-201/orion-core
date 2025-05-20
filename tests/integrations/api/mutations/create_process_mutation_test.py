@@ -1,7 +1,7 @@
 from pytest import mark
 
-from configs import ENDPOINT_NAME
 from src.constants import ErrorTypeEnum
+from src.main import ENDPOINT_NAME
 from src.models import Process
 
 
@@ -19,7 +19,6 @@ mutation CreateProcess(
     ) {
         process {
             id
-            name
             createdAt
             modifiedAt
             name
@@ -128,7 +127,7 @@ def test_create_process_fail_when_not_authorized(client_api):
 
 
 @mark.asyncio
-def test_create_process_fail_when_expired_token(
+async def test_create_process_fail_when_expired_token(
         client_api, initialize_db, patch_expired_token, get_authenticated_headers,
 ):
     variables = {
@@ -145,8 +144,7 @@ def test_create_process_fail_when_expired_token(
     assert data_json == expected_result_unauthorized_error
 
 
-@mark.asyncio
-def test_create_process_fail_when_null_token(client_api, initialize_db):
+def test_create_process_fail_when_null_token(client_api):
     variables = {
         'name': 'process_example',
         'description': this_is_description,
@@ -161,10 +159,7 @@ def test_create_process_fail_when_null_token(client_api, initialize_db):
     assert data_json == expected_result_unauthorized_error
 
 
-@mark.asyncio
-def test_create_process_fail_when_invalid_token(
-        client_api, initialize_db,
-):
+def test_create_process_fail_when_invalid_token(client_api):
     variables = {
         'name': 'process_example',
         'description': this_is_description,
@@ -176,13 +171,7 @@ def test_create_process_fail_when_invalid_token(
     )
 
     data_json = response.json()
-    assert data_json == {
-        'data': {'createProcess': None},
-        'errors': [{
-            'error_type': ErrorTypeEnum.UNAUTHORIZED_ERROR.value,
-            'message': 'The authentication has expired or is invalid.',
-        }],
-    }
+    assert data_json == expected_result_unauthorized_error
 
 
 def test_create_process_fails_with_null_data(client_api):

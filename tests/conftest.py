@@ -29,11 +29,29 @@ async def initialize_db():
     await Tortoise.close_connections()
 
 
+@fixture
+def get_patch_datetime_model(mocker):
+    default_datetime = datetime(2025, 1, 1, 12, 0, 0)
+    mocker.patch('tortoise.timezone.now', return_value=default_datetime)
+    return default_datetime.strftime('%Y-%m-%d %H:%M:%S')
+
+
 @pytest_asyncio.fixture
-async def default_user_registration_constructor():
-    user = await UserFactory.build()
+async def default_user_registration_constructor(get_patch_datetime_model):
+    user = await UserFactory.build(created_at=get_patch_datetime_model, modified_at=get_patch_datetime_model)
     await user.save()
     return user
+
+
+@pytest_asyncio.fixture
+async def default_process_registration_constructor(default_user_registration_constructor, get_patch_datetime_model):
+    process = await ProcessFactory.build(
+        user=default_user_registration_constructor,
+        created_at=get_patch_datetime_model,
+        modified_at=get_patch_datetime_model,
+    )
+    await process.save()
+    return process
 
 
 @pytest_asyncio.fixture
@@ -43,23 +61,9 @@ async def get_authenticated_headers(default_user_registration_constructor, monke
     return {'Authorization': f'Bearer {token}'}
 
 
-@pytest_asyncio.fixture
-async def default_process_registration_constructor(default_user_registration_constructor):
-    process = await ProcessFactory.build(user=default_user_registration_constructor)
-    await process.save()
-    return process
-
-
 @fixture
 def patch_expired_token(monkeypatch):
     monkeypatch.setattr(
         'src.utils.jwt_handler.ACCESS_TOKEN_EXPIRE_MINUTES_TOKEN',
         '-1',
     )
-
-
-@fixture
-def get_patch_datetime_model(mocker):
-    default_datetime = datetime(2025, 1, 1, 12, 0, 0)
-    mocker.patch('tortoise.timezone.now', return_value=default_datetime)
-    return default_datetime.strftime('%Y-%m-%d %H:%M:%S')

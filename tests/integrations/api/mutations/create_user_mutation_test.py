@@ -1,7 +1,7 @@
 from pytest import mark
 
-from configs import ENDPOINT_NAME
 from src.constants import ErrorTypeEnum
+from src.main import ENDPOINT_NAME
 from src.models import User
 
 

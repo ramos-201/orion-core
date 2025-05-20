@@ -14,7 +14,6 @@ from configs import (
     DB_PORT,
     DB_URL,
     DB_USER,
-    ENDPOINT_NAME,
     IS_DEV,
 )
 from src.api.schemas import schema
@@ -85,6 +84,8 @@ async def init_db():
 async def close_db():
     await Tortoise.close_connections()
 
+
+ENDPOINT_NAME = '/graphql'
 
 routes = [
     Route(ENDPOINT_NAME, graphql_endpoint, methods=['POST']),

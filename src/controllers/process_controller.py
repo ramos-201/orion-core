@@ -21,3 +21,6 @@ class ProcessController(BaseController):
             description=description,
             user=user,
         )
+
+    async def get_process_by_id(self, id):
+        return await self._get_or_none(id=id)
