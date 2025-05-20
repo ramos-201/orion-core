@@ -55,6 +55,20 @@ async def default_process_registration_constructor(default_user_registration_con
 
 
 @pytest_asyncio.fixture
+async def default_processes_registration_constructor(
+        default_user_registration_constructor, default_process_registration_constructor, get_patch_datetime_model,
+):
+    process = await ProcessFactory.build(
+        name='process_example_2',
+        user=default_user_registration_constructor,
+        created_at=get_patch_datetime_model,
+        modified_at=get_patch_datetime_model,
+    )
+    await process.save()
+    return {'process_1': default_process_registration_constructor, 'process_2': process}
+
+
+@pytest_asyncio.fixture
 async def get_authenticated_headers(default_user_registration_constructor, monkeypatch):
     # Authenticates with the `login` mutation.
     token = create_access_token(user_id=default_user_registration_constructor.id)

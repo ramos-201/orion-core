@@ -1,3 +1,5 @@
+from typing import Optional
+
 from tortoise.expressions import Q
 
 from src.controllers.base_controller import BaseController
@@ -28,8 +30,8 @@ class UserController(BaseController):
 
     async def get_user_by_credentials(
         self,
-        user,
-        password,
+        user: str,
+        password: str,
     ) -> 'User':
         return await self._get_or_none(
             Q(email=user) |
@@ -37,5 +39,5 @@ class UserController(BaseController):
             password=password,
         )
 
-    async def get_user_by_id(self, user_id):
+    async def get_user_by_id(self, user_id: int) -> Optional['User']:
         return await self._get_or_none(id=user_id)

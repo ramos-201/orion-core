@@ -1,3 +1,5 @@
+from typing import Optional
+
 from src.constants import STR_OR_NONE
 from src.controllers.base_controller import BaseController
 from src.models import (
@@ -22,5 +24,15 @@ class ProcessController(BaseController):
             user=user,
         )
 
-    async def get_process_by_id(self, id):
-        return await self._get_or_none(id=id)
+    async def get_process_by_unique_key(
+            self,
+            user_id: int,
+            id: STR_OR_NONE = None,
+            name: STR_OR_NONE = None,
+    ) -> Optional['Process']:
+        if id:
+            return await self._get_or_none(id=id, user_id=user_id)
+
+        if name:
+            return await self._get_or_none(name=name, user_id=user_id)
+        return None

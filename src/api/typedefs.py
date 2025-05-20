@@ -36,7 +36,10 @@ type ProcessPayload {
 
 query_type_def = """
 type Query {
-    process(id: String!): Process
+    process(
+        id: String
+        name: String
+    ): Process
 }
 """
 
