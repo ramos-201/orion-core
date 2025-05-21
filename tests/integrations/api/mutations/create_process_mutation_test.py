@@ -1,8 +1,8 @@
 from pytest import mark
 
-from src.constants import ErrorTypeEnum
-from src.main import ENDPOINT_NAME
+from src.api.graphql.router import ENDPOINT_NAME
 from src.models import Process
+from src.utils.constants import ErrorTypeEnum
 
 
 # TODO: test, cada usuario debe tener sus propios procesos y no deberia afectar el flujo de otro usuario.

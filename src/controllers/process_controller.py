@@ -1,11 +1,11 @@
 from typing import Optional
 
-from src.constants import STR_OR_NONE
 from src.controllers.base_controller import BaseController
 from src.models import (
     Process,
     User,
 )
+from src.utils.constants import STR_OR_NONE
 
 
 class ProcessController(BaseController):
@@ -17,7 +17,7 @@ class ProcessController(BaseController):
         name: str,
         description: STR_OR_NONE,
         user: 'User',
-    ) -> 'Process':
+    ) -> Process:
         return await self._create(
             name=name,
             description=description,
@@ -29,10 +29,9 @@ class ProcessController(BaseController):
             user_id: int,
             id: STR_OR_NONE = None,
             name: STR_OR_NONE = None,
-    ) -> Optional['Process']:
+    ) -> Optional[Process]:
         if id:
             return await self._get_or_none(id=id, user_id=user_id)
-
         if name:
             return await self._get_or_none(name=name, user_id=user_id)
         return None

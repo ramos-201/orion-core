@@ -1,6 +1,6 @@
 from ariadne import QueryType
 
-from src.api.resolvers.queries.processes_query import resolve_process
+from src.api.graphql.resolvers.queries.processes_query import resolve_process
 
 
 query = QueryType()

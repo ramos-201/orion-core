@@ -1,13 +1,13 @@
 from typing import Optional
 
-from src.constants import DICT_OR_NONE
 from src.models import (
     Process,
     User,
 )
+from src.utils.constants import DICT_OR_NONE
 
 
-def user_to_dict(user: 'User') -> DICT_OR_NONE:
+def user_to_dict(user: User) -> DICT_OR_NONE:
     if not user:
         return None
     return {
@@ -19,7 +19,7 @@ def user_to_dict(user: 'User') -> DICT_OR_NONE:
     }
 
 
-def process_to_dict(process: Optional['Process']) -> DICT_OR_NONE:
+def process_to_dict(process: Optional[Process]) -> DICT_OR_NONE:
     if not process:
         return None
     return {

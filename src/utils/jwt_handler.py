@@ -11,6 +11,7 @@ from configs import (
     ALGORITHM_TOKEN,
     SECRET_KEY_TOKEN,
 )
+from src.utils.constants import INT_OR_NONE
 
 
 def create_access_token(user_id: int) -> str:
@@ -22,7 +23,7 @@ def create_access_token(user_id: int) -> str:
     return jwt.encode(payload, SECRET_KEY_TOKEN, algorithm=ALGORITHM_TOKEN)
 
 
-def decode_access_token(token: str) -> int | None:
+def decode_access_token(token: str) -> INT_OR_NONE:
     try:
         payload = jwt.decode(token, SECRET_KEY_TOKEN, algorithms=[ALGORITHM_TOKEN])
         return int(payload.get('sub'))

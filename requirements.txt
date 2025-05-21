@@ -2,6 +2,7 @@ ariadne==0.26.1
 asyncpg==0.30.0
 dotenv~=0.9.9
 graphql-core==3.2.5
+PyJWT==2.10.1
 starlette==0.46.1
 tortoise-orm==0.25.0
 uvicorn==0.34.0

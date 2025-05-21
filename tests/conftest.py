@@ -5,7 +5,7 @@ from pytest import fixture
 from starlette.testclient import TestClient
 from tortoise import Tortoise
 
-from src.main import app
+from src.app import app
 from src.utils.jwt_handler import create_access_token
 from tests.factory_test import (
     ProcessFactory,

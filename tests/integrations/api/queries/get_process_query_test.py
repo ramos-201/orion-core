@@ -1,7 +1,7 @@
 from pytest import mark
 
-from src.constants import ErrorTypeEnum
-from src.main import ENDPOINT_NAME
+from src.api.graphql.router import ENDPOINT_NAME
+from src.utils.constants import ErrorTypeEnum
 from src.utils.jwt_handler import create_access_token
 from tests.factory_test import UserFactory
 

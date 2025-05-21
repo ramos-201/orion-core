@@ -1,7 +1,7 @@
 from pytest import mark
 
-from src.constants import ErrorTypeEnum
-from src.main import ENDPOINT_NAME
+from src.api.graphql.router import ENDPOINT_NAME
+from src.utils.constants import ErrorTypeEnum
 
 
 mutation = """
@@ -36,7 +36,7 @@ mutation login(
 async def test_login_success(client_api, initialize_db, default_user_registration_constructor, user_field, monkeypatch):
     token_mock = 'token_example.mock'
     monkeypatch.setattr(
-        'src.api.resolvers.mutations.login_mutation.create_access_token',
+        'src.api.graphql.resolvers.mutations.login_mutation.create_access_token',
         lambda user_id: token_mock,
     )
 

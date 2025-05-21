@@ -5,8 +5,8 @@ from abc import (
 
 from tortoise.exceptions import IntegrityError
 
-from src.constants import ErrorTypeEnum
-from src.exceptions import MutationError
+from src.utils.constants import ErrorTypeEnum
+from src.utils.exceptions import GraphQLException
 
 
 class BaseController(ABC):
@@ -19,7 +19,7 @@ class BaseController(ABC):
             return await self._model.create(**kwargs)
         except IntegrityError as error:
             field_name = str(error).split()[-1].split('.')[-1]
-            raise MutationError(
+            raise GraphQLException(
                 message=f'The data for the field "{field_name}" already exists.',
                 error_type=ErrorTypeEnum.DUPLICATE_FIELD_ERROR,
             )

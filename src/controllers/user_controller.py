@@ -18,7 +18,7 @@ class UserController(BaseController):
         email: str,
         mobile_phone: str,
         password: str,
-    ) -> 'User':
+    ) -> User:
         return await self._create(
             name=name,
             last_name=last_name,
@@ -32,12 +32,11 @@ class UserController(BaseController):
         self,
         user: str,
         password: str,
-    ) -> 'User':
+    ) -> User:
         return await self._get_or_none(
-            Q(email=user) |
-            Q(username=user),
+            Q(email=user) | Q(username=user),
             password=password,
         )
 
-    async def get_user_by_id(self, user_id: int) -> Optional['User']:
+    async def get_user_by_id(self, user_id: int) -> Optional[User]:
         return await self._get_or_none(id=user_id)

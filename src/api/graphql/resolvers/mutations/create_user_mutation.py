@@ -1,4 +1,4 @@
-from src.api.resolvers.payload import user_to_dict
+from src.api.graphql.payload import user_to_dict
 from src.controllers.user_controller import UserController
 from src.utils.validate_data import validate_required_data
 

@@ -4,6 +4,7 @@ from typing import Optional
 
 STR_OR_NONE = Optional[str]
 DICT_OR_NONE = Optional[dict]
+INT_OR_NONE = Optional[int]
 
 
 class ErrorTypeEnum(Enum):
