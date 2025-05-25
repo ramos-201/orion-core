@@ -1,3 +1,4 @@
+ariadne==0.26.2
 dotenv~=0.9.9
 httpx==0.28.1
 starlette==0.46.1

@@ -1,6 +1,6 @@
 from starlette.testclient import TestClient
 
-from src.api.router.router_gql import ENDPOINT_NAME
+from src.api.router import GRAPHQL_ENDPOINT
 from src.app import app
 
 
@@ -35,7 +35,7 @@ mutation registerUser(
 
 
 def test_register_user_successfully():
-    client_api = TestClient(app)
+    client = TestClient(app)
 
     variables = {
         'name': 'John',
@@ -45,12 +45,26 @@ def test_register_user_successfully():
         'mobilePhone': '3111111111',
         'password': 'password_example',
     }
-    response = client_api.post(
-        ENDPOINT_NAME,
+
+    response = client.post(
+        GRAPHQL_ENDPOINT,
         json={'query': mutation, 'variables': variables},
     )
 
     assert response.status_code == 200
 
     data_json = response.json()
-    assert data_json == {'OK': True}
+    assert data_json == {
+        'data': {
+            'registerUser': {
+                'user': {
+                    'id': '1',
+                    'username': variables['username'],
+                    'name': variables['name'],
+                    'email': variables['email'],
+                    'mobilePhone': variables['mobilePhone'],
+                },
+                'token': '<PASSWORD>',
+            },
+        },
+    }

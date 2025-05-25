@@ -1,6 +1,6 @@
 from starlette.applications import Starlette
 
-from src.api.router.router_gql import router
+from src.api.router import routes
 
 
-app = Starlette(routes=router)
+app = Starlette(routes=routes)
