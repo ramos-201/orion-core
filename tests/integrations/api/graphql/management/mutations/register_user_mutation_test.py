@@ -79,7 +79,7 @@ async def test_register_user_successfully(client, initialize_db):
     assert type(user.modified_at) is datetime
 
 
-def test_register_user_with_null_variables_returns_internal_error(client):
+def test_register_user_with_null_required_variables_returns_internal_error(client):
     variables = {
         'name': None,
         'lastName': None,
@@ -116,4 +116,28 @@ def test_register_user_with_null_variables_returns_internal_error(client):
                 'message': 'Variable $password of non-null type String! must not be null.',
             },
         ],
+    }
+
+
+def test_register_user_with_empty_required_variables_returns_empty_data_error(client):
+    variables = {
+        'name': '',
+        'lastName': '',
+        'username': '',
+        'email': '',
+        'mobilePhone': '',
+        'password': '',
+    }
+
+    response = client.post(GRAPHQL_ENDPOINT, json={'query': mutation, 'variables': variables})
+    assert response.status_code == 200
+
+    data_json = response.json()
+    assert data_json == {
+        'data': {'registerUser': None},
+        'errors': [{
+            'error_type': ErrorTypeEnum.EMPTY_DATA_ERROR.value,
+            'message': 'The following fields cannot be empty: [name, last_name, username, email, mobile_phone, '
+                       'password].',
+        }],
     }

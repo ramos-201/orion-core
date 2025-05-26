@@ -1,6 +1,6 @@
 from ariadne import gql
 
-from src.api.management.graphql.mutations.resolvers.register_user import (
+from src.api.management.graphql.mutations.resolvers.register_user_mutation import (
     register_user_type_gql,
 )
 from src.api.management.graphql.types.payloads.user_payload_type import UserPayloadType

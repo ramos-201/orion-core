@@ -1,6 +1,6 @@
 from ariadne import MutationType
 
-from src.api.management.graphql.mutations.resolvers.register_user import (
+from src.api.management.graphql.mutations.resolvers.register_user_mutation import (
     resolve_register_user,
 )
 

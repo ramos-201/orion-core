@@ -21,7 +21,13 @@ def _get_error_formatter(error: GraphQLError, _) -> dict:
     if isinstance(error, GraphQLError):
         raw_message = str(error.message)
         message_error = re.sub(r"[\"']", '', raw_message)
-        error_type = error.extensions.get('error_type', ErrorTypeEnum.INTERNAL_ERROR.value)
+
+        original_error = getattr(error, 'original_error', None)
+
+        if original_error:
+            error_type = getattr(original_error, 'error_type', error_type)
+        else:
+            error_type = error.extensions.get('error_type', ErrorTypeEnum.INTERNAL_ERROR.value)
 
     return {
         'error_type': error_type,

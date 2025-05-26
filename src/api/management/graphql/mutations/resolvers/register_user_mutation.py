@@ -2,6 +2,7 @@ from typing import Any
 
 from src.api.management.graphql.types.payloads.user_payload_type import UserPayloadType
 from src.controllers.user_controller import UserController
+from src.utils.validate_data import validate_not_empty_fields
 
 
 register_user_type_gql = """
@@ -25,6 +26,15 @@ async def resolve_register_user(
     mobile_phone: str,
     password: str,
 ) -> dict[str, Any]:
+    validate_not_empty_fields(
+        name=name,
+        last_name=last_name,
+        username=username,
+        email=email,
+        mobile_phone=mobile_phone,
+        password=password,
+    )
+
     user_controller = UserController()
 
     user = await user_controller.create_user(
