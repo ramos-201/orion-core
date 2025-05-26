@@ -1,3 +1,4 @@
+import re
 from typing import Any
 
 from ariadne import (
@@ -5,10 +6,27 @@ from ariadne import (
     make_executable_schema,
 )
 from ariadne.types import GraphQLResult
+from graphql import GraphQLError
 
 from src.api.management.graphql.mutations.mutations import mutation
 from src.api.management.graphql.queries import query
 from src.api.management.graphql.typedef import type_defs
+from src.utils.enums.type_error import ErrorTypeEnum
+
+
+def _get_error_formatter(error: GraphQLError, _) -> dict:
+    message_error = 'An unknown error occurred.'
+    error_type = ErrorTypeEnum.UNKNOWN_ERROR.value
+
+    if isinstance(error, GraphQLError):
+        raw_message = str(error.message)
+        message_error = re.sub(r"[\"']", '', raw_message)
+        error_type = error.extensions.get('error_type', ErrorTypeEnum.INTERNAL_ERROR.value)
+
+    return {
+        'error_type': error_type,
+        'message': message_error,
+    }
 
 
 async def execute_schema(graphql_payload: dict[str, Any], context: dict[str, Any]) -> GraphQLResult:
@@ -18,4 +36,9 @@ async def execute_schema(graphql_payload: dict[str, Any], context: dict[str, Any
         mutation,
         convert_names_case=True,
     )
-    return await graphql(schema, graphql_payload, context_value=context)
+    return await graphql(
+        schema,
+        graphql_payload,
+        context_value=context,
+        error_formatter=_get_error_formatter,
+    )

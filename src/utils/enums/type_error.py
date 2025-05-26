@@ -1,0 +1,6 @@
+from enum import Enum
+
+
+class ErrorTypeEnum(Enum):
+    INTERNAL_ERROR = 'INTERNAL_ERROR'
+    UNKNOWN_ERROR = 'UNKNOWN_ERROR'

@@ -4,6 +4,7 @@ from pytest import mark
 
 from src.api.router_api import GRAPHQL_ENDPOINT
 from src.models.user import User
+from src.utils.enums.type_error import ErrorTypeEnum
 
 
 mutation = """
@@ -76,3 +77,43 @@ async def test_register_user_successfully(client, initialize_db):
     assert user.is_account_active
     assert type(user.created_at) is datetime
     assert type(user.modified_at) is datetime
+
+
+def test_register_user_with_null_variables_returns_internal_error(client):
+    variables = {
+        'name': None,
+        'lastName': None,
+        'username': None,
+        'email': None,
+        'mobilePhone': None,
+        'password': None,
+    }
+
+    response = client.post(GRAPHQL_ENDPOINT, json={'query': mutation, 'variables': variables})
+    assert response.status_code == 200
+
+    data_json = response.json()
+    assert data_json == {
+        'data': None,
+        'errors': [
+            {
+                'error_type': ErrorTypeEnum.INTERNAL_ERROR.value,
+                'message': 'Variable $name of non-null type String! must not be null.',
+            }, {
+                'error_type': ErrorTypeEnum.INTERNAL_ERROR.value,
+                'message': 'Variable $lastName of non-null type String! must not be null.',
+            }, {
+                'error_type': ErrorTypeEnum.INTERNAL_ERROR.value,
+                'message': 'Variable $username of non-null type String! must not be null.',
+            }, {
+                'error_type': ErrorTypeEnum.INTERNAL_ERROR.value,
+                'message': 'Variable $email of non-null type String! must not be null.',
+            }, {
+                'error_type': ErrorTypeEnum.INTERNAL_ERROR.value,
+                'message': 'Variable $mobilePhone of non-null type String! must not be null.',
+            }, {
+                'error_type': ErrorTypeEnum.INTERNAL_ERROR.value,
+                'message': 'Variable $password of non-null type String! must not be null.',
+            },
+        ],
+    }
