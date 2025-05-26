@@ -1,4 +1,4 @@
 from ariadne import QueryType
 
 
-query_gql = QueryType()
+query = QueryType()

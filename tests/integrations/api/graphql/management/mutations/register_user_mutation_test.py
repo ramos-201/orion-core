@@ -1,7 +1,9 @@
-from starlette.testclient import TestClient
+from datetime import datetime
 
-from src.api.router import GRAPHQL_ENDPOINT
-from src.app import app
+from pytest import mark
+
+from src.api.router_api import GRAPHQL_ENDPOINT
+from src.models.user import User
 
 
 mutation = """
@@ -34,9 +36,8 @@ mutation registerUser(
 """
 
 
-def test_register_user_successfully():
-    client = TestClient(app)
-
+@mark.asyncio
+async def test_register_user_successfully(client, initialize_db):
     variables = {
         'name': 'John',
         'lastName': 'Smith',
@@ -46,11 +47,7 @@ def test_register_user_successfully():
         'password': 'password_example',
     }
 
-    response = client.post(
-        GRAPHQL_ENDPOINT,
-        json={'query': mutation, 'variables': variables},
-    )
-
+    response = client.post(GRAPHQL_ENDPOINT, json={'query': mutation, 'variables': variables})
     assert response.status_code == 200
 
     data_json = response.json()
@@ -68,3 +65,14 @@ def test_register_user_successfully():
             },
         },
     }
+
+    user = await User.get(id=data_json['data']['registerUser']['user']['id'])
+    assert user.name == variables['name']
+    assert user.last_name == variables['lastName']
+    assert user.username == variables['username']
+    assert user.email == variables['email']
+    assert user.mobile_phone == variables['mobilePhone']
+    assert user.password == variables['password']
+    assert user.is_account_active
+    assert type(user.created_at) is datetime
+    assert type(user.modified_at) is datetime

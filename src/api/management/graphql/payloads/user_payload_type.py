@@ -2,6 +2,7 @@ from typing import Any
 
 from src.api.management.graphql.graphql_type_abs import GraphQLTypeAbs
 from src.api.management.graphql.schemas_type.user_type import UserType
+from src.models import User
 
 
 class UserPayloadType(GraphQLTypeAbs):
@@ -13,7 +14,7 @@ class UserPayloadType(GraphQLTypeAbs):
     """
 
     @classmethod
-    def to_result(cls, user: dict[str, str], token: str) -> dict[str, Any]:
+    def to_result(cls, user: User, token: str) -> dict[str, Any]:
         return {
             'user': UserType.to_result(user),
             'token': token,

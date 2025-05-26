@@ -2,13 +2,13 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse
 from starlette.routing import Route
 
-from src.api.management.execute_schema import execute_schema
+from src.api.management.schema import execute_schema
 
 
 GRAPHQL_ENDPOINT = '/graphql'
 
 
-async def graphql_endpoint(request: Request) -> JSONResponse:
+async def execute_graphql_endpoint(request: Request) -> JSONResponse:
     data = await request.json()
     query = data.get('query')
     variables = data.get('variables')
@@ -24,10 +24,10 @@ async def graphql_endpoint(request: Request) -> JSONResponse:
     return JSONResponse(result)
 
 
-routes = [
+router = [
     Route(
         GRAPHQL_ENDPOINT,
-        graphql_endpoint,
+        execute_graphql_endpoint,
         methods=['POST'],
     ),
 ]

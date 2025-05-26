@@ -1,6 +1,8 @@
 ariadne==0.26.2
+asyncpg==0.30.0
 dotenv~=0.9.9
 httpx==0.28.1
 starlette==0.46.1
+tortoise-orm==0.25.0
 uvicorn==0.34.0
 uvloop==0.21.0

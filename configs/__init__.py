@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 
 logger = logging.getLogger(' UPLOAD_ENV')
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 
 if not os.getenv('LOADED_ENV'):
