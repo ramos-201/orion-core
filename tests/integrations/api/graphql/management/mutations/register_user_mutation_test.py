@@ -51,8 +51,8 @@ async def test_register_user_successfully(client, initialize_db):
     response = client.post(GRAPHQL_ENDPOINT, json={'query': mutation, 'variables': variables})
     assert response.status_code == 200
 
-    data_json = response.json()
-    assert data_json == {
+    response_json = response.json()
+    assert response_json == {
         'data': {
             'registerUser': {
                 'user': {
@@ -67,7 +67,7 @@ async def test_register_user_successfully(client, initialize_db):
         },
     }
 
-    user = await User.get(id=data_json['data']['registerUser']['user']['id'])
+    user = await User.get(id=response_json['data']['registerUser']['user']['id'])
     assert user.name == variables['name']
     assert user.last_name == variables['lastName']
     assert user.username == variables['username']
@@ -92,8 +92,8 @@ def test_register_user_with_null_required_variables_returns_internal_error(clien
     response = client.post(GRAPHQL_ENDPOINT, json={'query': mutation, 'variables': variables})
     assert response.status_code == 200
 
-    data_json = response.json()
-    assert data_json == {
+    response_json = response.json()
+    assert response_json == {
         'data': None,
         'errors': [
             {
@@ -132,12 +132,38 @@ def test_register_user_with_empty_required_variables_returns_empty_data_error(cl
     response = client.post(GRAPHQL_ENDPOINT, json={'query': mutation, 'variables': variables})
     assert response.status_code == 200
 
-    data_json = response.json()
-    assert data_json == {
+    response_json = response.json()
+    assert response_json == {
         'data': {'registerUser': None},
         'errors': [{
             'error_type': ErrorTypeEnum.EMPTY_DATA_ERROR.value,
             'message': 'The following fields cannot be empty: [name, last_name, username, email, mobile_phone, '
                        'password].',
+        }],
+    }
+
+
+@mark.asyncio
+async def test_register_user_when_unique_fields_exist_in_user_model_returns_duplicate_field_error(
+        client, initialize_db, default_user_registration_constructor, get_patch_datetime_model,
+):
+    variables = {
+        'name': default_user_registration_constructor.name,
+        'lastName': default_user_registration_constructor.last_name,
+        'username': default_user_registration_constructor.username,
+        'email': default_user_registration_constructor.email,
+        'mobilePhone': default_user_registration_constructor.mobile_phone,
+        'password': default_user_registration_constructor.password,
+    }
+
+    response = client.post(GRAPHQL_ENDPOINT, json={'query': mutation, 'variables': variables})
+    assert response.status_code == 200
+
+    response_json = response.json()
+    assert response_json == {
+        'data': {'registerUser': None},
+        'errors': [{
+            'error_type': ErrorTypeEnum.DUPLICATE_FIELD_ERROR.value,
+            'message': 'The data for the field mobile_phone already exists.',
         }],
     }
