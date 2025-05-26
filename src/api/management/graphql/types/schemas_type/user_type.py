@@ -1,4 +1,4 @@
-from src.api.management.graphql.graphql_type_abs import GraphQLTypeAbs
+from src.api.management.graphql.types.graphql_type_abs import GraphQLTypeAbs
 from src.models import User
 
 

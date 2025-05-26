@@ -1,7 +1,7 @@
 from typing import Any
 
-from src.api.management.graphql.graphql_type_abs import GraphQLTypeAbs
-from src.api.management.graphql.schemas_type.user_type import UserType
+from src.api.management.graphql.types.graphql_type_abs import GraphQLTypeAbs
+from src.api.management.graphql.types.schemas_type.user_type import UserType
 from src.models import User
 
 

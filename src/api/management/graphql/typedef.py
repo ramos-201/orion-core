@@ -3,8 +3,8 @@ from ariadne import gql
 from src.api.management.graphql.mutations.resolvers.register_user import (
     register_user_type_gql,
 )
-from src.api.management.graphql.payloads.user_payload_type import UserPayloadType
-from src.api.management.graphql.schemas_type.user_type import UserType
+from src.api.management.graphql.types.payloads.user_payload_type import UserPayloadType
+from src.api.management.graphql.types.schemas_type.user_type import UserType
 
 
 schema_type_def = UserType.type_def_gql.strip()

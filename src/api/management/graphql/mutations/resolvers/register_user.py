@@ -1,6 +1,6 @@
 from typing import Any
 
-from src.api.management.graphql.payloads.user_payload_type import UserPayloadType
+from src.api.management.graphql.types.payloads.user_payload_type import UserPayloadType
 from src.controllers.user_controller import UserController
 
 
