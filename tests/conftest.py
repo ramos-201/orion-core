@@ -25,13 +25,6 @@ async def initialize_db():
     await Tortoise.close_connections()
 
 
-@fixture
-def get_patch_datetime_model(mocker):
-    default_datetime = datetime(2025, 1, 1, 12, 0, 0)
-    mocker.patch('tortoise.timezone.now', return_value=default_datetime)
-    return default_datetime.strftime('%Y-%m-%d %H:%M:%S')
-
-
 @pytest_asyncio.fixture
 async def default_user_registration_constructor(get_patch_datetime_model):
     user = await UserFactory.build(
@@ -40,3 +33,18 @@ async def default_user_registration_constructor(get_patch_datetime_model):
     )
     await user.save()
     return user
+
+
+@fixture
+def get_patch_datetime_model(mocker):
+    default_datetime = datetime(2025, 1, 1, 12, 0, 0)
+    mocker.patch('tortoise.timezone.now', return_value=default_datetime)
+    return default_datetime.strftime('%Y-%m-%d %H:%M:%S')
+
+
+@fixture
+def patch_expired_token(monkeypatch):
+    monkeypatch.setattr(
+        'src.utils.jwt_handler.ACCESS_TOKEN_EXPIRE_MINUTES_TOKEN',
+        '-1',
+    )
