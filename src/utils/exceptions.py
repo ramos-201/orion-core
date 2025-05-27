@@ -1,4 +1,4 @@
-from src.utils.enums.type_error import ErrorTypeEnum
+from src.utils.constants import ErrorTypeEnum
 
 
 class GeneralException(Exception):

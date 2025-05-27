@@ -11,7 +11,7 @@ from graphql import GraphQLError
 from src.api.management.graphql.mutations.mutations import mutation
 from src.api.management.graphql.queries import query
 from src.api.management.graphql.typedef import type_defs
-from src.utils.enums.type_error import ErrorTypeEnum
+from src.utils.constants import ErrorTypeEnum
 
 
 def _get_error_formatter(error: GraphQLError, _) -> dict:

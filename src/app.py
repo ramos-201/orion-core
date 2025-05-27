@@ -1,7 +1,7 @@
 from starlette.applications import Starlette
 
 from src.api.router_api import router
-from src.db.config import (
+from src.db_config import (
     close_db,
     init_db,
 )

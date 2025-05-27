@@ -4,7 +4,7 @@ from pytest import mark
 
 from src.api.router_api import GRAPHQL_ENDPOINT
 from src.models.user import User
-from src.utils.enums.type_error import ErrorTypeEnum
+from src.utils.constants import ErrorTypeEnum
 
 
 mutation = """
