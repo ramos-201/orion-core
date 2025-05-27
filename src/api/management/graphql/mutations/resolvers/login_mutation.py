@@ -3,6 +3,7 @@ from typing import Any
 from src.api.management.graphql.types.payloads.user_payload_type import UserPayloadType
 from src.controllers.user_controller import UserController
 from src.utils.exceptions import InvalidCredentialException
+from src.utils.jwt_handler import create_access_token
 from src.utils.validate_data import validate_not_empty_fields
 
 
@@ -31,4 +32,6 @@ async def resolve_login(
     if not user_obj:
         raise InvalidCredentialException(message='The credentials entered are not valid.')
 
-    return UserPayloadType.to_result(user=user_obj, token='<PASSWORD>')
+    token = create_access_token(user_id=user_obj.id)
+
+    return UserPayloadType.to_result(user=user_obj, token=token)

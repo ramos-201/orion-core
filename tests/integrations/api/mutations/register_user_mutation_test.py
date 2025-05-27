@@ -38,7 +38,13 @@ mutation registerUser(
 
 
 @mark.asyncio
-async def test_register_user_successfully(client, initialize_db):
+async def test_register_user_successfully(client, initialize_db, mocker):
+    token_mock = 'token_example.mock'
+    mocker.patch(
+        'src.api.management.graphql.mutations.resolvers.register_user_mutation.create_access_token',
+        return_value=token_mock,
+    )
+
     variables = {
         'name': 'John',
         'lastName': 'Smith',
@@ -62,7 +68,7 @@ async def test_register_user_successfully(client, initialize_db):
                     'email': variables['email'],
                     'mobilePhone': variables['mobilePhone'],
                 },
-                'token': '<PASSWORD>',
+                'token': token_mock,
             },
         },
     }

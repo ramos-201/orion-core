@@ -33,12 +33,22 @@ mutation login(
         'username',
     ),
 )
-async def test_login_successfully(client, initialize_db, default_user_registration_constructor, user_field):
+async def test_login_successfully(
+        client, initialize_db, default_user_registration_constructor, mocker, user_field,
+):
+    token_mock = 'token_example.mock'
+    mocker.patch(
+        'src.api.management.graphql.mutations.resolvers.login_mutation.create_access_token',
+        return_value=token_mock,
+    )
+
     variables = {
         'user': getattr(default_user_registration_constructor, user_field),
         'password': default_user_registration_constructor.password,
     }
+
     response = client.post(GRAPHQL_ENDPOINT, json={'query': mutation, 'variables': variables})
+    assert response.status_code == 200
 
     data_json = response.json()
     assert data_json == {
@@ -51,7 +61,7 @@ async def test_login_successfully(client, initialize_db, default_user_registrati
                     'email': default_user_registration_constructor.email,
                     'mobilePhone': default_user_registration_constructor.mobile_phone,
                 },
-                'token': '<PASSWORD>',
+                'token': token_mock,
             },
         },
     }
