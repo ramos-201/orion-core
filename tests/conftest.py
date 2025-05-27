@@ -33,7 +33,7 @@ def get_patch_datetime_model(mocker):
 
 
 @pytest_asyncio.fixture
-async def default_user_registration_constructor(initialize_db, get_patch_datetime_model):
+async def default_user_registration_constructor(get_patch_datetime_model):
     user = await UserFactory.build(
         created_at=get_patch_datetime_model,
         modified_at=get_patch_datetime_model,

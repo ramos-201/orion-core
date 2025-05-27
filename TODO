@@ -1,0 +1,5 @@
+## New Functionality
+- [ ] (Optional) Add functionality for the `active` field in the user model (True/False).
+
+## Models | Users | Tests
+- [ ] Create tests to validate creation of users with active/inactive states.

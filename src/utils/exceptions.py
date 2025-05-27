@@ -15,3 +15,8 @@ class EmptyDataException(GeneralException):
 class DuplicateFieldException(GeneralException):
     def __init__(self, message: str):
         super().__init__(message=message, error_type=ErrorTypeEnum.DUPLICATE_FIELD_ERROR)
+
+
+class InvalidCredentialException(GeneralException):
+    def __init__(self, message: str):
+        super().__init__(message=message, error_type=ErrorTypeEnum.INVALID_CREDENTIALS_ERROR)
