@@ -28,8 +28,7 @@ async def resolve_login(
 
     user_obj = await user_controller.get_user_by_credentials(user=user, password=password)
 
-    if not user:
+    if not user_obj:
         raise InvalidCredentialException(message='The credentials entered are not valid.')
 
-    assert user_obj is not None
     return UserPayloadType.to_result(user=user_obj, token='<PASSWORD>')
