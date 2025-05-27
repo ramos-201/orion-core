@@ -98,3 +98,33 @@ def test_login_with_empty_required_variables_returns_empty_data_error(client):
             'message': 'The following fields cannot be empty: [user, password].',
         }],
     }
+
+
+@mark.asyncio
+@mark.parametrize(
+    'password_field, user_field', (
+        ('password', '__not_found__'),
+        ('__not_found__', 'username'),
+        ('__not_found__', 'email'),
+        ('__not_found__', '__not_found__'),
+    ),
+)
+async def test_login_with_invalid_credentials_returns_invalid_credentials_error(
+    client, initialize_db, default_user_registration_constructor, password_field, user_field,
+):
+    variables = {
+        'user': getattr(default_user_registration_constructor, user_field, 'user_not_exist'),
+        'password': getattr(default_user_registration_constructor, password_field, 'wrong_password'),
+    }
+
+    response = client.post(GRAPHQL_ENDPOINT, json={'query': mutation, 'variables': variables})
+    assert response.status_code == 200
+
+    data_json = response.json()
+    assert data_json == {
+        'data': {'login': None},
+        'errors': [{
+            'error_type': ErrorTypeEnum.INVALID_CREDENTIALS_ERROR.value,
+            'message': 'The credentials entered are not valid.',
+        }],
+    }
