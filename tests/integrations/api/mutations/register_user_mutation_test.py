@@ -145,7 +145,7 @@ def test_register_user_with_empty_required_variables_returns_empty_data_error(cl
 
 @mark.asyncio
 async def test_register_user_when_unique_fields_exist_in_user_model_returns_duplicate_field_error(
-    client, initialize_db, default_user_registration_constructor, get_patch_datetime_model,
+    client, initialize_db, default_user_registration_constructor,
 ):
     variables = {
         'name': default_user_registration_constructor.name,

@@ -1,6 +1,7 @@
 from pytest import mark
 
 from src.api.router_api import GRAPHQL_ENDPOINT
+from src.utils.constants import ErrorTypeEnum
 
 
 mutation = """
@@ -53,4 +54,28 @@ async def test_login_successfully(client, initialize_db, default_user_registrati
                 'token': '<PASSWORD>',
             },
         },
+    }
+
+
+def test_login_with_null_required_variables_returns_internal_error(client):
+    variables = {
+        'user': None,
+        'password': None,
+    }
+
+    response = client.post(GRAPHQL_ENDPOINT, json={'query': mutation, 'variables': variables})
+    assert response.status_code == 200
+
+    response_json = response.json()
+    assert response_json == {
+        'data': None,
+        'errors': [
+            {
+                'error_type': ErrorTypeEnum.INTERNAL_ERROR.value,
+                'message': 'Variable $user of non-null type String! must not be null.',
+            }, {
+                'error_type': ErrorTypeEnum.INTERNAL_ERROR.value,
+                'message': 'Variable $password of non-null type String! must not be null.',
+            },
+        ],
     }

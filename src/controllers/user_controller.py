@@ -7,7 +7,6 @@ from src.models import User
 
 
 class UserController(BaseController):
-
     def __init__(self):
         super().__init__(model=User)
 
