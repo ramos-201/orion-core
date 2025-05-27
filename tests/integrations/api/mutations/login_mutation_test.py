@@ -79,3 +79,22 @@ def test_login_with_null_required_variables_returns_internal_error(client):
             },
         ],
     }
+
+
+def test_login_with_empty_required_variables_returns_empty_data_error(client):
+    variables = {
+        'user': '',
+        'password': '',
+    }
+
+    response = client.post(GRAPHQL_ENDPOINT, json={'query': mutation, 'variables': variables})
+    assert response.status_code == 200
+
+    response_json = response.json()
+    assert response_json == {
+        'data': {'login': None},
+        'errors': [{
+            'error_type': ErrorTypeEnum.EMPTY_DATA_ERROR.value,
+            'message': 'The following fields cannot be empty: [user, password].',
+        }],
+    }
