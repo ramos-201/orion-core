@@ -6,7 +6,10 @@ from starlette.testclient import TestClient
 from tortoise import Tortoise
 
 from src.app import app
-from tests.factory_test import UserFactory
+from tests.factory_test import (
+    ProcessFactory,
+    UserFactory,
+)
 
 
 @fixture
@@ -33,6 +36,17 @@ async def default_user_registration_constructor(get_patch_datetime_model):
     )
     await user.save()
     return user
+
+
+@pytest_asyncio.fixture
+async def default_process_registration_constructor(default_user_registration_constructor, get_patch_datetime_model):
+    process = await ProcessFactory.build(
+        user=default_user_registration_constructor,
+        created_at=get_patch_datetime_model,
+        modified_at=get_patch_datetime_model,
+    )
+    await process.save()
+    return process
 
 
 @fixture

@@ -1,16 +1,29 @@
 from ariadne import gql
 
 from src.api.management.graphql.mutations.resolvers.login_mutation import login_type_gql
+from src.api.management.graphql.mutations.resolvers.register_process_mutation import (
+    register_process_type_gql,
+)
 from src.api.management.graphql.mutations.resolvers.register_user_mutation import (
     register_user_type_gql,
 )
+from src.api.management.graphql.types.payloads.process_payload_type import (
+    ProcessPayloadType,
+)
 from src.api.management.graphql.types.payloads.user_payload_type import UserPayloadType
+from src.api.management.graphql.types.schemas_type.process_type import ProcessType
 from src.api.management.graphql.types.schemas_type.user_type import UserType
 
 
-schema_type_def = UserType.type_def_gql.strip()
+schema_type_def = '\n'.join([
+    UserType.type_def_gql.strip(),
+    ProcessType.type_def_gql.strip(),
+])
 
-payload_type_def = UserPayloadType.type_def_gql.strip()
+payload_type_def = '\n'.join([
+    UserPayloadType.type_def_gql.strip(),
+    ProcessPayloadType.type_def_gql.strip(),
+])
 
 query_type_def = """
 type Query {
@@ -22,6 +35,7 @@ mutation_type_def = f"""
 type Mutation {{
     {register_user_type_gql.strip()}
     {login_type_gql.strip()}
+    {register_process_type_gql.strip()}
 }}
 """
 

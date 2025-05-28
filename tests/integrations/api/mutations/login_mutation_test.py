@@ -34,7 +34,7 @@ mutation login(
     ),
 )
 async def test_login_successfully(
-        client, initialize_db, default_user_registration_constructor, mocker, user_field,
+    client, initialize_db, default_user_registration_constructor, mocker, user_field,
 ):
     token_mock = 'token_example.mock'
     mocker.patch(
