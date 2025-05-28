@@ -1,12 +1,13 @@
 from typing import Optional
 
 from src.controllers.base_controller import BaseController
+from src.models import User
 from src.models.process import Process
 
 
 class ProcessController(BaseController):
-    def __init__(self):
-        super().__init__(model=Process)
+    def __init__(self, user: Optional[User] = None):
+        super().__init__(model=Process, user=user)
 
     async def create_process(
             self,

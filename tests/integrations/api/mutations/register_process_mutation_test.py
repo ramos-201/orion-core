@@ -43,7 +43,8 @@ mutation registerProcess(
     ),
 )
 async def test_register_process_successfully(
-    client, initialize_db, get_patch_datetime_model, description_value, is_active_value, expected_result_is_active,
+    client, initialize_db, get_patch_datetime_model, get_authenticated_headers, default_user_registration_constructor,
+    description_value, is_active_value, expected_result_is_active,
 ):
     variables = {
         'name': 'name process example',
@@ -51,7 +52,11 @@ async def test_register_process_successfully(
         'isActive': is_active_value,
     }
 
-    response = client.post(GRAPHQL_ENDPOINT, json={'query': mutation, 'variables': variables})
+    response = client.post(
+        GRAPHQL_ENDPOINT,
+        json={'query': mutation, 'variables': variables},
+        headers=get_authenticated_headers,
+    )
     assert response.status_code == 200
 
     data_json = response.json()
@@ -74,7 +79,7 @@ async def test_register_process_successfully(
     assert process.name == variables['name']
     assert process.description == variables['description']
     assert process.is_active == expected_result_is_active
-    assert await process.user is None
+    assert await process.user == default_user_registration_constructor
     assert type(process.created_at) is datetime
     assert type(process.modified_at) is datetime
 
@@ -90,15 +95,19 @@ async def test_register_process_successfully(
     ),
 )
 async def test_register_process_with_data_no_required_successfully(
-    client, initialize_db, get_patch_datetime_model, key_variables, value_variables, expected_result_is_active,
-    expected_result_description,
+    client, initialize_db, get_patch_datetime_model, get_authenticated_headers,
+    key_variables, value_variables, expected_result_is_active, expected_result_description,
 ):
     variables = {
         'name': 'name process example',
         key_variables: value_variables,
     }
 
-    response = client.post(GRAPHQL_ENDPOINT, json={'query': mutation, 'variables': variables})
+    response = client.post(
+        GRAPHQL_ENDPOINT,
+        json={'query': mutation, 'variables': variables},
+        headers=get_authenticated_headers,
+    )
     assert response.status_code == 200
 
     data_json = response.json()

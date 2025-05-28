@@ -38,3 +38,6 @@ class UserController(BaseController):
             Q(email=user) | Q(username=user),
             password=password,
         )
+
+    async def get_user_by_id(self, user_id: int) -> Optional[User]:
+        return await self._get_or_none(id=user_id)

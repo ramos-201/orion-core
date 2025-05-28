@@ -6,6 +6,7 @@ from starlette.testclient import TestClient
 from tortoise import Tortoise
 
 from src.app import app
+from src.utils.jwt_handler import create_access_token
 from tests.factory_test import (
     ProcessFactory,
     UserFactory,
@@ -62,3 +63,10 @@ def patch_expired_token(monkeypatch):
         'src.utils.jwt_handler.ACCESS_TOKEN_EXPIRE_MINUTES_TOKEN',
         '-1',
     )
+
+
+@pytest_asyncio.fixture
+async def get_authenticated_headers(default_user_registration_constructor):
+    # Authenticates with the `login` mutation.
+    token = create_access_token(user_id=default_user_registration_constructor.id)
+    return {'Authorization': f'Bearer {token}'}
