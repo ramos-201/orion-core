@@ -131,15 +131,19 @@ async def test_register_process_with_data_no_required_successfully(
     assert process is not None
 
 
+@mark.asyncio
 @mark.parametrize(
     'headers', (
         {},
         {'Authorization': 'Bearer '},
         {'Authorization': ''},
         {'': ''},
+        {'Authorization': 'Bearer invalid_token'},
     ),
 )
-def test_register_process_with_no_authentication_return_unauthorized_error(client, headers):
+async def test_register_process_with_no_authentication_return_unauthorized_error(
+    client, initialize_db, get_authenticated_headers, headers,
+):
     variables = {
         'name': 'name process example',
         'description': 'This is a example description.',
@@ -184,5 +188,27 @@ async def test_register_process_with_expired_token_return_unauthorized_error(
         'errors': [{
             'error_type': ErrorTypeEnum.UNAUTHORIZED_ERROR.value,
             'message': 'The authentication has expired or is invalid.',
+        }],
+    }
+
+
+def test_register_process_with_null_data_return_internal_error(client, initialize_db, get_authenticated_headers):
+    variables = {
+        'name': None,
+        'description': '<Optional>',
+        'isActive': bool('<Optional>'),
+    }
+    response = client.post(
+        GRAPHQL_ENDPOINT,
+        json={'query': mutation, 'variables': variables},
+        headers=get_authenticated_headers,
+    )
+
+    data_json = response.json()
+    assert data_json == {
+        'data': None,
+        'errors': [{
+            'error_type': ErrorTypeEnum.INTERNAL_ERROR.value,
+            'message': 'Variable $name of non-null type String! must not be null.',
         }],
     }
