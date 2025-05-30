@@ -244,3 +244,30 @@ async def test_register_process_with_empty_variables_return_empty_data_error(
             'message': 'The following fields cannot be empty: [name].',
         }],
     }
+
+
+@mark.asyncio
+async def test_register_process_when_unique_fields_exist_in_process_model_returns_duplicate_field_error(
+    client, initialize_db, get_authenticated_headers, default_process_registration_constructor,
+):
+    variables = {
+        'name': default_process_registration_constructor.name,
+        'description': default_process_registration_constructor.description,
+        'isActive': default_process_registration_constructor.is_active,
+    }
+
+    response = client.post(
+        GRAPHQL_ENDPOINT,
+        json={'query': mutation, 'variables': variables},
+        headers=get_authenticated_headers,
+    )
+    assert response.status_code == 200
+
+    data_json = response.json()
+    assert data_json == {
+        'data': {'registerProcess': None},
+        'errors': [{
+            'error_type': ErrorTypeEnum.DUPLICATE_FIELD_ERROR.value,
+            'message': 'The data for the field name already exists.',
+        }],
+    }
