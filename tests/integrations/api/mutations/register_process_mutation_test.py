@@ -132,6 +132,43 @@ async def test_register_process_with_data_no_required_successfully(
 
 
 @mark.asyncio
+async def test_register_process_when_user_has_multiple_existing_processes_successfully(
+    client, initialize_db, get_authenticated_headers, default_user_registration_constructor,
+):
+    variables_process_1 = {
+        'name': 'name process example 1',
+        'description': 'This a example description.',
+        'isActive': True,
+    }
+
+    response_process_1 = client.post(
+        GRAPHQL_ENDPOINT,
+        json={'query': mutation, 'variables': variables_process_1},
+        headers=get_authenticated_headers,
+    )
+    assert response_process_1.status_code == 200
+
+    variables_process_2 = {
+        'name': 'name process example 2',
+        'description': 'This a example description.',
+        'isActive': True,
+    }
+
+    response_process_1 = client.post(
+        GRAPHQL_ENDPOINT,
+        json={'query': mutation, 'variables': variables_process_2},
+        headers=get_authenticated_headers,
+    )
+    assert response_process_1.status_code == 200
+
+    processes = await Process.filter(user_id=default_user_registration_constructor.id)
+    assert len(processes) == 2
+
+    assert processes[0].name == variables_process_1['name']
+    assert processes[1].name == variables_process_2['name']
+
+
+@mark.asyncio
 @mark.parametrize(
     'headers', (
         {},
