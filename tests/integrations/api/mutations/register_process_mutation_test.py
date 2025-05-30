@@ -176,11 +176,13 @@ async def test_register_process_with_expired_token_return_unauthorized_error(
         'description': 'This is a example description.',
         'isActive': True,
     }
+
     response = client.post(
         GRAPHQL_ENDPOINT,
         json={'query': mutation, 'variables': variables},
         headers=get_authenticated_headers,
     )
+    assert response.status_code == 200
 
     data_json = response.json()
     assert data_json == {
@@ -192,17 +194,20 @@ async def test_register_process_with_expired_token_return_unauthorized_error(
     }
 
 
-def test_register_process_with_null_data_return_internal_error(client, initialize_db, get_authenticated_headers):
+@mark.asyncio
+def test_register_process_with_null_variables_return_internal_error(client, initialize_db, get_authenticated_headers):
     variables = {
         'name': None,
         'description': '<Optional>',
         'isActive': bool('<Optional>'),
     }
+
     response = client.post(
         GRAPHQL_ENDPOINT,
         json={'query': mutation, 'variables': variables},
         headers=get_authenticated_headers,
     )
+    assert response.status_code == 200
 
     data_json = response.json()
     assert data_json == {
@@ -210,5 +215,32 @@ def test_register_process_with_null_data_return_internal_error(client, initializ
         'errors': [{
             'error_type': ErrorTypeEnum.INTERNAL_ERROR.value,
             'message': 'Variable $name of non-null type String! must not be null.',
+        }],
+    }
+
+
+@mark.asyncio
+async def test_register_process_with_empty_variables_return_empty_data_error(
+    client, initialize_db, get_authenticated_headers,
+):
+    variables = {
+        'name': '',
+        'description': '<Optional>',
+        'isActive': bool('<Optional>'),
+    }
+
+    response = client.post(
+        GRAPHQL_ENDPOINT,
+        json={'query': mutation, 'variables': variables},
+        headers=get_authenticated_headers,
+    )
+    assert response.status_code == 200
+
+    data_json = response.json()
+    assert data_json == {
+        'data': {'registerProcess': None},
+        'errors': [{
+            'error_type': ErrorTypeEnum.EMPTY_DATA_ERROR.value,
+            'message': 'The following fields cannot be empty: [name].',
         }],
     }
