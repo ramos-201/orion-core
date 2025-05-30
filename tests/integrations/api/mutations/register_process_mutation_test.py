@@ -4,6 +4,7 @@ from pytest import mark
 
 from src.api.router_api import GRAPHQL_ENDPOINT
 from src.models.process import Process
+from src.utils.constants import ErrorTypeEnum
 
 
 mutation = """
@@ -128,3 +129,27 @@ async def test_register_process_with_data_no_required_successfully(
 
     process = await Process.get(id=data_json['data']['registerProcess']['process']['id'])
     assert process is not None
+
+
+def test_register_process_with_no_authentication_return_unauthorized_error(client):
+    variables = {
+        'name': 'name process example',
+        'description': 'This is a example description.',
+        'isActive': True,
+    }
+
+    response = client.post(
+        GRAPHQL_ENDPOINT,
+        json={'query': mutation, 'variables': variables},
+        headers={},
+    )
+    assert response.status_code == 200
+
+    data_json = response.json()
+    assert data_json == {
+        'data': {'registerProcess': None},
+        'errors': [{
+            'error_type': ErrorTypeEnum.UNAUTHORIZED_ERROR.value,
+            'message': 'The authentication has expired or is invalid.',
+        }],
+    }
