@@ -131,7 +131,15 @@ async def test_register_process_with_data_no_required_successfully(
     assert process is not None
 
 
-def test_register_process_with_no_authentication_return_unauthorized_error(client):
+@mark.parametrize(
+    'headers', (
+        {},
+        {'Authorization': 'Bearer '},
+        {'Authorization': ''},
+        {'': ''},
+    ),
+)
+def test_register_process_with_no_authentication_return_unauthorized_error(client, headers):
     variables = {
         'name': 'name process example',
         'description': 'This is a example description.',
@@ -141,9 +149,34 @@ def test_register_process_with_no_authentication_return_unauthorized_error(clien
     response = client.post(
         GRAPHQL_ENDPOINT,
         json={'query': mutation, 'variables': variables},
-        headers={},
+        headers=headers,
     )
     assert response.status_code == 200
+
+    data_json = response.json()
+    assert data_json == {
+        'data': {'registerProcess': None},
+        'errors': [{
+            'error_type': ErrorTypeEnum.UNAUTHORIZED_ERROR.value,
+            'message': 'The authentication has expired or is invalid.',
+        }],
+    }
+
+
+@mark.asyncio
+async def test_register_process_with_expired_token_return_unauthorized_error(
+    client, initialize_db, patch_expired_token, get_authenticated_headers,
+):
+    variables = {
+        'name': 'name process example',
+        'description': 'This is a example description.',
+        'isActive': True,
+    }
+    response = client.post(
+        GRAPHQL_ENDPOINT,
+        json={'query': mutation, 'variables': variables},
+        headers=get_authenticated_headers,
+    )
 
     data_json = response.json()
     assert data_json == {
