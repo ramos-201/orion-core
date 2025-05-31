@@ -1,6 +1,7 @@
 from pytest import mark
 
 from src.api.router_api import GRAPHQL_ENDPOINT
+from src.utils.constants import ErrorTypeEnum
 
 
 query = """
@@ -160,3 +161,54 @@ async def test_get_process_with_empty_variables_returns_null_data(
 
     response_json = response.json()
     assert response_json == {'data': {'getProcess': None}}
+
+
+@mark.asyncio
+@mark.parametrize(
+    'headers', (
+        {},
+        {'Authorization': 'Bearer '},
+        {'Authorization': ''},
+        {'': ''},
+        {'Authorization': 'Bearer invalid_token'},
+    ),
+)
+async def test_get_process_with_no_authentication_return_unauthorized_error(
+    client, initialize_db, get_authenticated_headers, default_process_registration_constructor, headers,
+):
+    response = client.post(
+        GRAPHQL_ENDPOINT,
+        json={'query': query, 'variables': {'id': str(default_process_registration_constructor.id)}},
+        headers=headers,
+    )
+    assert response.status_code == 200
+
+    response_json = response.json()
+    assert response_json == {
+        'data': {'getProcess': None},
+        'errors': [{
+            'error_type': ErrorTypeEnum.UNAUTHORIZED_ERROR.value,
+            'message': 'The authentication has expired or is invalid.',
+        }],
+    }
+
+
+@mark.asyncio
+async def test_register_process_with_expired_token_return_unauthorized_error(
+    client, initialize_db, patch_expired_token, get_authenticated_headers, default_process_registration_constructor,
+):
+    response = client.post(
+        GRAPHQL_ENDPOINT,
+        json={'query': query, 'variables': {'id': str(default_process_registration_constructor.id)}},
+        headers=get_authenticated_headers,
+    )
+    assert response.status_code == 200
+
+    response_json = response.json()
+    assert response_json == {
+        'data': {'getProcess': None},
+        'errors': [{
+            'error_type': ErrorTypeEnum.UNAUTHORIZED_ERROR.value,
+            'message': 'The authentication has expired or is invalid.',
+        }],
+    }
