@@ -1,4 +1,7 @@
-from datetime import datetime
+from datetime import (
+    datetime,
+    timezone,
+)
 
 import pytest_asyncio
 from pytest import fixture
@@ -52,9 +55,10 @@ async def default_process_registration_constructor(default_user_registration_con
 
 @fixture
 def get_patch_datetime_model(mocker):
-    default_datetime = datetime(2025, 1, 1, 12, 0, 0)
+    default_datetime = datetime(2025, 1, 1, 12, 0, 0, tzinfo=timezone.utc).strftime('%Y-%m-%d %H:%M:%S%z')
+    default_datetime = default_datetime[:-2] + ':' + default_datetime[-2:]
     mocker.patch('tortoise.timezone.now', return_value=default_datetime)
-    return default_datetime.strftime('%Y-%m-%d %H:%M:%S')
+    return default_datetime
 
 
 @fixture

@@ -60,8 +60,8 @@ async def test_register_process_successfully(
     )
     assert response.status_code == 200
 
-    data_json = response.json()
-    assert data_json == {
+    response_json = response.json()
+    assert response_json == {
         'data': {
             'registerProcess': {
                 'process': {
@@ -76,7 +76,7 @@ async def test_register_process_successfully(
         },
     }
 
-    process = await Process.get(id=data_json['data']['registerProcess']['process']['id'])
+    process = await Process.get(id=response_json['data']['registerProcess']['process']['id'])
     assert process.name == variables['name']
     assert process.description == variables['description']
     assert process.is_active == expected_result_is_active
@@ -111,8 +111,8 @@ async def test_register_process_with_data_no_required_successfully(
     )
     assert response.status_code == 200
 
-    data_json = response.json()
-    assert data_json == {
+    response_json = response.json()
+    assert response_json == {
         'data': {
             'registerProcess': {
                 'process': {
@@ -127,7 +127,7 @@ async def test_register_process_with_data_no_required_successfully(
         },
     }
 
-    process = await Process.get(id=data_json['data']['registerProcess']['process']['id'])
+    process = await Process.get(id=response_json['data']['registerProcess']['process']['id'])
     assert process is not None
 
 
@@ -194,8 +194,8 @@ async def test_register_process_with_no_authentication_return_unauthorized_error
     )
     assert response.status_code == 200
 
-    data_json = response.json()
-    assert data_json == {
+    response_json = response.json()
+    assert response_json == {
         'data': {'registerProcess': None},
         'errors': [{
             'error_type': ErrorTypeEnum.UNAUTHORIZED_ERROR.value,
@@ -221,8 +221,8 @@ async def test_register_process_with_expired_token_return_unauthorized_error(
     )
     assert response.status_code == 200
 
-    data_json = response.json()
-    assert data_json == {
+    response_json = response.json()
+    assert response_json == {
         'data': {'registerProcess': None},
         'errors': [{
             'error_type': ErrorTypeEnum.UNAUTHORIZED_ERROR.value,
@@ -246,8 +246,8 @@ def test_register_process_with_null_variables_return_internal_error(client, init
     )
     assert response.status_code == 200
 
-    data_json = response.json()
-    assert data_json == {
+    response_json = response.json()
+    assert response_json == {
         'data': None,
         'errors': [{
             'error_type': ErrorTypeEnum.INTERNAL_ERROR.value,
@@ -273,8 +273,8 @@ async def test_register_process_with_empty_variables_return_empty_data_error(
     )
     assert response.status_code == 200
 
-    data_json = response.json()
-    assert data_json == {
+    response_json = response.json()
+    assert response_json == {
         'data': {'registerProcess': None},
         'errors': [{
             'error_type': ErrorTypeEnum.EMPTY_DATA_ERROR.value,
@@ -300,8 +300,8 @@ async def test_register_process_when_unique_fields_exist_in_process_model_return
     )
     assert response.status_code == 200
 
-    data_json = response.json()
-    assert data_json == {
+    response_json = response.json()
+    assert response_json == {
         'data': {'registerProcess': None},
         'errors': [{
             'error_type': ErrorTypeEnum.DUPLICATE_FIELD_ERROR.value,

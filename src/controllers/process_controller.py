@@ -24,3 +24,9 @@ class ProcessController(BaseController):
             description=description,
             is_active=is_active,
         )
+
+    async def get_process_by_id(self, id: Optional[str] = None) -> Optional[Process]:
+        return await self._get_or_none(id=id)
+
+    async def get_process_by_name(self, name: Optional[str] = None) -> Optional[Process]:
+        return await self._get_or_none(name=name)

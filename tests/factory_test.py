@@ -11,8 +11,8 @@ class UserFactory(Factory):
     class Meta:
         model = User
 
-    created_at = '2025-01-01 12:00:00'
-    modified_at = '2025-01-01 12:00:00'
+    created_at = '2025-01-01 12:00:00+00:00'
+    modified_at = '2025-01-01 12:00:00+00:00'
     name = 'John'
     last_name = 'Smith'
     username = 'john.smith'
@@ -26,8 +26,8 @@ class ProcessFactory(Factory):
     class Meta:
         model = Process
 
-    created_at = '2025-01-01 12:00:00'
-    modified_at = '2025-01-01 12:00:00'
+    created_at = '2025-01-01 12:00:00+00:00'
+    modified_at = '2025-01-01 12:00:00+00:00'
     user = SubFactory(UserFactory)
     name = 'name process example'
     description = 'This is a example description.'

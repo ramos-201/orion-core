@@ -9,19 +9,19 @@ from src.utils.constants import ErrorTypeEnum
 
 mutation = """
 mutation registerUser(
-    $name: String!,
-    $lastName: String!,
-    $username: String!,
-    $email: String!,
-    $mobilePhone: String!,
+    $name: String!
+    $lastName: String!
+    $username: String!
+    $email: String!
+    $mobilePhone: String!
     $password: String!
 ) {
     registerUser(
-        name: $name,
-        lastName: $lastName,
-        username: $username,
-        email: $email,
-        mobilePhone: $mobilePhone,
+        name: $name
+        lastName: $lastName
+        username: $username
+        email: $email
+        mobilePhone: $mobilePhone
         password: $password
     ) {
         user {

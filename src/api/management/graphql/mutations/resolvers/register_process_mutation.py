@@ -30,14 +30,15 @@ async def resolve_register_process(
 ) -> dict[str, Any]:
     validate_not_empty_fields(name=name)
 
-    user: User = info.context['user']
+    # Create data by `User`
+    user_obj: User = info.context['user']
 
-    process_controller = ProcessController(user=user)
+    process_controller = ProcessController(user=user_obj)
 
-    process = await process_controller.create_process(
+    process_obj = await process_controller.create_process(
         name=name,
         description=description,
         is_active=is_active,
     )
 
-    return ProcessPayloadType.to_result(process=process)
+    return ProcessPayloadType.to_result(process=process_obj)

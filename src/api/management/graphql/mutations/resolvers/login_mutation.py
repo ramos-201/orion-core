@@ -9,7 +9,7 @@ from src.utils.validate_data import validate_not_empty_fields
 
 login_type_gql = """
 login(
-    user: String!,
+    user: String!
     password: String!
 ): UserPayloadType
 """

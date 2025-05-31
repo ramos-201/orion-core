@@ -8,11 +8,11 @@ from src.utils.validate_data import validate_not_empty_fields
 
 register_user_type_gql = """
 registerUser(
-    name: String!,
-    lastName: String!,
-    username: String!,
-    email: String!,
-    mobilePhone: String!,
+    name: String!
+    lastName: String!
+    username: String!
+    email: String!
+    mobilePhone: String!
     password: String!
 ): UserPayloadType
 """

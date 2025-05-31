@@ -13,6 +13,7 @@ from src.api.management.graphql.types.payloads.process_payload_type import (
 from src.api.management.graphql.types.payloads.user_payload_type import UserPayloadType
 from src.api.management.graphql.types.schemas_type.process_type import ProcessType
 from src.api.management.graphql.types.schemas_type.user_type import UserType
+from src.api.management.queries.resolvers.get_process import get_process_type_gql
 
 
 schema_type_def = '\n'.join([
@@ -25,10 +26,10 @@ payload_type_def = '\n'.join([
     ProcessPayloadType.type_def_gql.strip(),
 ])
 
-query_type_def = """
-type Query {
-    _empty: String!
-}
+query_type_def = f"""
+type Query {{
+    {get_process_type_gql.strip()}
+}}
 """
 
 mutation_type_def = f"""

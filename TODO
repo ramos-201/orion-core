@@ -3,3 +3,6 @@
 
 ## Models | Users | Tests
 - [ ] Create tests to validate creation of users with active/inactive states.
+
+## Process | Tests
+- [ ] Creation of tests to validate when a process is registered by another user.

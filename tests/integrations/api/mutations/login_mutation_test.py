@@ -6,11 +6,11 @@ from src.utils.constants import ErrorTypeEnum
 
 mutation = """
 mutation login(
-    $user: String!,
+    $user: String!
     $password: String!
 ) {
     login(
-        user: $user,
+        user: $user
         password: $password
     ) {
         user {
@@ -50,8 +50,8 @@ async def test_login_successfully(
     response = client.post(GRAPHQL_ENDPOINT, json={'query': mutation, 'variables': variables})
     assert response.status_code == 200
 
-    data_json = response.json()
-    assert data_json == {
+    response_json = response.json()
+    assert response_json == {
         'data': {
             'login': {
                 'user': {
@@ -130,8 +130,8 @@ async def test_login_with_invalid_credentials_returns_invalid_credentials_error(
     response = client.post(GRAPHQL_ENDPOINT, json={'query': mutation, 'variables': variables})
     assert response.status_code == 200
 
-    data_json = response.json()
-    assert data_json == {
+    response_json = response.json()
+    assert response_json == {
         'data': {'login': None},
         'errors': [{
             'error_type': ErrorTypeEnum.INVALID_CREDENTIALS_ERROR.value,
