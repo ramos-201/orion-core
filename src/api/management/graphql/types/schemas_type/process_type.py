@@ -1,3 +1,5 @@
+from typing import Optional
+
 from src.api.management.graphql.types.graphql_type_abs import GraphQLTypeAbs
 from src.models.process import Process
 
@@ -15,7 +17,9 @@ class ProcessType(GraphQLTypeAbs):
     """
 
     @classmethod
-    def to_result(cls, process: Process) -> dict[str, str]:
+    def to_result(cls, process: Optional[Process] = None) -> Optional[dict[str, str]]:
+        if not process:
+            return None
         return {
             'id': process.id,
             'name': process.name,
