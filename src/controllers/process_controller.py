@@ -12,10 +12,9 @@ class ProcessController(BaseController):
     async def create_process(
             self,
             name: str,
-            description: Optional[str] = '',
-            is_active: Optional[bool] = True,
+            description: Optional[str],
+            is_active: Optional[bool],
     ) -> Process:
-
         if is_active is None:
             is_active = True
 
@@ -25,8 +24,11 @@ class ProcessController(BaseController):
             is_active=is_active,
         )
 
-    async def get_process_by_id(self, id: Optional[str] = None) -> Optional[Process]:
+    async def get_process_by_id(self, id: str) -> Optional[Process]:
         return await self._get_or_none(id=id)
 
-    async def get_process_by_name(self, name: Optional[str] = None) -> Optional[Process]:
+    async def get_process_by_name(self, name: str) -> Optional[Process]:
         return await self._get_or_none(name=name)
+
+    async def get_all(self, limit: int, offset: int) -> tuple[list[Process], int]:
+        return await self._get_all(limit=limit, offset=offset)

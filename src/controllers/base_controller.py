@@ -21,7 +21,7 @@ class BaseController(ABC):
         self.user = user
         self._model = model
 
-    def _inject_user_in_kwargs_if_exists(self, **kwargs: Any):
+    def _inject_user_in_kwargs_if_exists(self, **kwargs: Any) -> dict[str, Any]:
         if self.user:
             kwargs['user'] = self.user
         return kwargs
@@ -39,3 +39,10 @@ class BaseController(ABC):
             return await self._model.get_or_none(*args, **kwargs)
         except ValueError:
             return None
+
+    async def _get_all(self, limit: int, offset: int) -> tuple[list[MODEL], int]:
+        kwargs = self._inject_user_in_kwargs_if_exists()
+        query = self._model.filter(**kwargs)
+        total = await query.count()
+        results = await query.offset(offset).limit(limit)
+        return results, total

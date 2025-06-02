@@ -2,10 +2,7 @@ from abc import (
     ABC,
     abstractmethod,
 )
-from typing import (
-    Any,
-    Optional,
-)
+from typing import Any
 
 
 class GraphQLTypeAbs(ABC):
@@ -21,5 +18,5 @@ class GraphQLTypeAbs(ABC):
 
     @classmethod
     @abstractmethod
-    def to_result(cls, *values: Any, **kwargs: Any) -> Optional[dict[str, Any]]:
+    def to_result(cls, *values: Any, **kwargs: Any) -> dict[str, Any]:
         pass

@@ -5,11 +5,11 @@ from src.models import User
 class UserType(GraphQLTypeAbs):
     type_def_gql = """
     type UserType {
-        id: String
-        username: String
-        name: String
-        email: String
-        mobilePhone: String
+        id: String!
+        username: String!
+        name: String!
+        email: String!
+        mobilePhone: String!
     }
     """
 

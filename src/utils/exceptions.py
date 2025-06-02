@@ -25,3 +25,8 @@ class InvalidCredentialException(GeneralException):
 class UnauthorizedException(GeneralException):
     def __init__(self, message: str):
         super().__init__(message=message, error_type=ErrorTypeEnum.UNAUTHORIZED_ERROR)
+
+
+class UnknownError(GeneralException):
+    def __init__(self, message: str):
+        super().__init__(message=message, error_type=ErrorTypeEnum.UNKNOWN_ERROR)

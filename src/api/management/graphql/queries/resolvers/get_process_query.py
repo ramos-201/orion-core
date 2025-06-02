@@ -1,4 +1,7 @@
-from typing import Optional
+from typing import (
+    Any,
+    Optional,
+)
 
 from src.api.management.graphql.types.schemas_type.process_type import ProcessType
 from src.controllers.process_controller import ProcessController
@@ -19,7 +22,7 @@ async def resolve_get_process(
     _, info,
     id: Optional[str] = None,
     name: Optional[str] = None,
-):
+) -> Optional[dict[str, Any]]:
     # Get data by `User`
     user_obj: User = info.context['user']
 
@@ -31,5 +34,8 @@ async def resolve_get_process(
         process_obj = await process_controller.get_process_by_id(id=id)
     elif name:
         process_obj = await process_controller.get_process_by_name(name=name)
+
+    if not process_obj:
+        return None
 
     return ProcessType().to_result(process=process_obj)

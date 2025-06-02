@@ -1,3 +1,5 @@
+from typing import Any
+
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 from starlette.routing import Route
@@ -10,7 +12,7 @@ from src.utils.jwt_handler import decode_access_token
 GRAPHQL_ENDPOINT = '/graphql'
 
 
-async def _get_context(request) -> dict:
+async def _get_context(request) -> dict[str, Any]:
     context = {
         'request': request,
         'user': None,

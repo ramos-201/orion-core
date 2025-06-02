@@ -14,7 +14,7 @@ from src.api.management.graphql.typedef import type_defs
 from src.utils.constants import ErrorTypeEnum
 
 
-def _get_error_formatter(error: GraphQLError, _) -> dict:
+def _get_error_formatter(error: GraphQLError, _) -> dict[str, Any]:
     message_error = 'An unknown error occurred.'
     error_type = ErrorTypeEnum.UNKNOWN_ERROR.value
 

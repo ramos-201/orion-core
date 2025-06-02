@@ -7,11 +7,17 @@ from src.api.management.graphql.mutations.resolvers.register_process_mutation im
 from src.api.management.graphql.mutations.resolvers.register_user_mutation import (
     register_user_type_gql,
 )
-from src.api.management.graphql.queries.resolvers.get_process import (
+from src.api.management.graphql.queries.resolvers.get_process_query import (
     get_process_type_gql,
+)
+from src.api.management.graphql.queries.resolvers.get_processes_query import (
+    get_processes_type_gql,
 )
 from src.api.management.graphql.types.payloads.process_payload_type import (
     ProcessPayloadType,
+)
+from src.api.management.graphql.types.payloads.processes_payload_type import (
+    ProcessesPayloadType,
 )
 from src.api.management.graphql.types.payloads.user_payload_type import UserPayloadType
 from src.api.management.graphql.types.schemas_type.process_type import ProcessType
@@ -26,11 +32,13 @@ schema_type_def = '\n'.join([
 payload_type_def = '\n'.join([
     UserPayloadType.type_def_gql.strip(),
     ProcessPayloadType.type_def_gql.strip(),
+    ProcessesPayloadType.type_def_gql.strip(),
 ])
 
 query_type_def = f"""
 type Query {{
     {get_process_type_gql.strip()}
+    {get_processes_type_gql.strip()}
 }}
 """
 

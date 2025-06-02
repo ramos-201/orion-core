@@ -6,3 +6,6 @@
 
 ## Process | Tests
 - [ ] Creation of tests to validate when a process is registered by another user.
+
+## Test
+- [ ] Error a creating a record.

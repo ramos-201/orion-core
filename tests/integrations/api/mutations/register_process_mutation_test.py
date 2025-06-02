@@ -18,14 +18,12 @@ mutation registerProcess(
         description: $description
         isActive: $isActive
     ) {
-        process {
-            id
-            createdAt
-            modifiedAt
-            name
-            description
-            isActive
-        }
+        id
+        createdAt
+        modifiedAt
+        name
+        description
+        isActive
     }
 }
 """
@@ -64,19 +62,17 @@ async def test_register_process_successfully(
     assert response_json == {
         'data': {
             'registerProcess': {
-                'process': {
-                    'id': '1',
-                    'name': variables['name'],
-                    'createdAt': get_patch_datetime_model,
-                    'modifiedAt': get_patch_datetime_model,
-                    'description': variables['description'],
-                    'isActive': expected_result_is_active,
-                },
+                'id': '1',
+                'name': variables['name'],
+                'createdAt': get_patch_datetime_model,
+                'modifiedAt': get_patch_datetime_model,
+                'description': variables['description'],
+                'isActive': expected_result_is_active,
             },
         },
     }
 
-    process = await Process.get(id=response_json['data']['registerProcess']['process']['id'])
+    process = await Process.get(id=response_json['data']['registerProcess']['id'])
     assert process.name == variables['name']
     assert process.description == variables['description']
     assert process.is_active == expected_result_is_active
@@ -90,9 +86,9 @@ async def test_register_process_successfully(
     'key_variables, value_variables, expected_result_is_active, expected_result_description', (
         ('description', 'This is example description.', True, 'This is example description.'),
         ('description', None, True, None),
-        ('isActive', True, True, ''),
-        ('isActive', False, False, ''),
-        ('isActive', None, True, ''),
+        ('isActive', True, True, None),
+        ('isActive', False, False, None),
+        ('isActive', None, True, None),
     ),
 )
 async def test_register_process_with_data_no_required_successfully(
@@ -115,19 +111,17 @@ async def test_register_process_with_data_no_required_successfully(
     assert response_json == {
         'data': {
             'registerProcess': {
-                'process': {
-                    'id': '1',
-                    'name': variables['name'],
-                    'createdAt': get_patch_datetime_model,
-                    'modifiedAt': get_patch_datetime_model,
-                    'description': expected_result_description,
-                    'isActive': expected_result_is_active,
-                },
+                'id': '1',
+                'name': variables['name'],
+                'createdAt': get_patch_datetime_model,
+                'modifiedAt': get_patch_datetime_model,
+                'description': expected_result_description,
+                'isActive': expected_result_is_active,
             },
         },
     }
 
-    process = await Process.get(id=response_json['data']['registerProcess']['process']['id'])
+    process = await Process.get(id=response_json['data']['registerProcess']['id'])
     assert process is not None
 
 

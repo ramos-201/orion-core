@@ -3,9 +3,7 @@ from typing import (
     Optional,
 )
 
-from src.api.management.graphql.types.payloads.process_payload_type import (
-    ProcessPayloadType,
-)
+from src.api.management.graphql.types.schemas_type.process_type import ProcessType
 from src.controllers.process_controller import ProcessController
 from src.models import User
 from src.utils.auth_decorators import login_required
@@ -17,7 +15,7 @@ registerProcess(
     name: String!
     description: String
     isActive: Boolean
-): ProcessPayloadType
+): ProcessType
 """
 
 
@@ -25,8 +23,8 @@ registerProcess(
 async def resolve_register_process(
     _, info,
     name: str,
-    description: Optional[str] = '',
-    is_active: Optional[bool] = True,
+    description: Optional[str] = None,
+    is_active: Optional[bool] = None,
 ) -> dict[str, Any]:
     validate_not_empty_fields(name=name)
 
@@ -41,4 +39,4 @@ async def resolve_register_process(
         is_active=is_active,
     )
 
-    return ProcessPayloadType.to_result(process=process_obj)
+    return ProcessType.to_result(process=process_obj)
