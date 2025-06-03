@@ -1,6 +1,7 @@
 from pytest import mark
 
 from src.api.router_api import GRAPHQL_ENDPOINT
+from src.utils.constants import ErrorTypeEnum
 from tests.factory_test import ProcessFactory
 
 
@@ -35,7 +36,7 @@ query getProcesses(
 @mark.parametrize(
     'variables', (
         None,
-        {'isActive': None},
+        {},
     ),
 )
 async def test_get_processes_when_variables_are_not_sent_successfully(
@@ -186,3 +187,88 @@ async def test_get_processes_null_when_not_exist(
 
     response_json = response.json()
     assert response_json == {'data': {'getProcesses': None}}
+
+
+@mark.asyncio
+async def test_get_processes_when_null_variables_successfully(
+    client, initialize_db, default_user_registration_constructor, get_authenticated_headers,
+    default_process_registration_constructor,
+):
+    response = client.post(
+        GRAPHQL_ENDPOINT,
+        json={'query': query, 'variables': {'isActive': None, 'limit': None, 'pagination': None}},
+        headers=get_authenticated_headers,
+    )
+    assert response.status_code == 200
+
+    response_json = response.json()
+    assert response_json['data']['getProcesses']['total'] == 1
+
+    expected_process_id = response_json['data']['getProcesses']['processes'][0]['process']['id']
+    assert expected_process_id == str(default_process_registration_constructor.id)
+
+
+@mark.asyncio
+async def test_get_processes_with_other_fields_successfully(
+    client, initialize_db, get_authenticated_headers, default_process_registration_constructor,
+):
+    response = client.post(
+        GRAPHQL_ENDPOINT,
+        json={'query': query, 'variables': {'other_field': 'example'}},
+        headers=get_authenticated_headers,
+    )
+    assert response.status_code == 200
+
+    response_json = response.json()
+    assert response_json['data']['getProcesses']['total'] == 1
+
+
+@mark.asyncio
+@mark.parametrize(
+    'headers', (
+        {},
+        {'Authorization': 'Bearer '},
+        {'Authorization': ''},
+        {'': ''},
+        {'Authorization': 'Bearer invalid_token'},
+    ),
+)
+async def test_get_processes_with_no_authentication_return_unauthorized_error(
+    client, initialize_db, get_authenticated_headers, default_process_registration_constructor, headers,
+):
+    response = client.post(
+        GRAPHQL_ENDPOINT,
+        json={'query': query, 'variables': {'isActive': default_process_registration_constructor.is_active}},
+        headers=headers,
+    )
+    assert response.status_code == 200
+
+    response_json = response.json()
+    assert response_json == {
+        'data': {'getProcesses': None},
+        'errors': [{
+            'error_type': ErrorTypeEnum.UNAUTHORIZED_ERROR.value,
+            'message': 'The authentication has expired or is invalid.',
+        }],
+    }
+
+
+@mark.asyncio
+async def test_register_processes_with_expired_token_return_unauthorized_error(
+    client, initialize_db, patch_expired_token, get_authenticated_headers, default_process_registration_constructor,
+):
+    response = client.post(
+        GRAPHQL_ENDPOINT,
+        json={'query': query, 'variables': {'isActive': default_process_registration_constructor.is_active}},
+        headers=get_authenticated_headers,
+    )
+    assert response.status_code == 200
+
+    response_json = response.json()
+    assert response_json == {
+        'data': {'getProcesses': None},
+        'errors': [{
+            'error_type': ErrorTypeEnum.UNAUTHORIZED_ERROR.value,
+            'message': 'The authentication has expired or is invalid.',
+        }],
+    }
