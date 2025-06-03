@@ -15,7 +15,7 @@ get_processes_type_gql = """
 getProcesses(
     isActive: Boolean
     limit: Int
-    offset: Int
+    pagination: Int
 ): ProcessesPayloadType
 """
 
@@ -25,20 +25,26 @@ async def resolve_get_processes(
     _, info,
     is_active: Optional[bool] = None,
     limit: Optional[int] = None,
-    offset: Optional[int] = None,
+    pagination: Optional[int] = None,
 ) -> Optional[dict[str, Any]]:
     # Get data by `User`
     user_obj: User = info.context['user']
 
     process_controller = ProcessController(user=user_obj)
 
-    if is_active is None:
-        limit = limit or 10
-        offset = offset or 0
+    limit = limit or 10
+    pagination = pagination or 0
 
-        process_obj, total = await process_controller.get_all(limit=limit, offset=offset)
+    if is_active is not None:
+        processes_obj, total = await process_controller.filter_by_is_active(
+            is_active=is_active,
+            limit=limit,
+            pagination=pagination,
+        )
+    else:
+        processes_obj, total = await process_controller.get_all(limit=limit, pagination=pagination)
 
-        if process_obj:
-            return ProcessesPayloadType.to_result(processes=process_obj, total=total)
+    if processes_obj:
+        return ProcessesPayloadType.to_result(total=total, processes=processes_obj)
 
     return None

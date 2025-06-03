@@ -40,9 +40,10 @@ class BaseController(ABC):
         except ValueError:
             return None
 
-    async def _get_all(self, limit: int, offset: int) -> tuple[list[MODEL], int]:
-        kwargs = self._inject_user_in_kwargs_if_exists()
-        query = self._model.filter(**kwargs)
+    async def _filter(self, limit: int, pagination: int, *args: Q, **kwargs: Any) -> tuple[list[MODEL], int]:
+        offset = pagination * limit
+        kwargs = self._inject_user_in_kwargs_if_exists(**kwargs)
+        query = self._model.filter(*args, **kwargs)
         total = await query.count()
         results = await query.offset(offset).limit(limit)
         return results, total

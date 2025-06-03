@@ -30,5 +30,13 @@ class ProcessController(BaseController):
     async def get_process_by_name(self, name: str) -> Optional[Process]:
         return await self._get_or_none(name=name)
 
-    async def get_all(self, limit: int, offset: int) -> tuple[list[Process], int]:
-        return await self._get_all(limit=limit, offset=offset)
+    async def get_all(self, limit: int, pagination: int) -> tuple[list[Process], int]:
+        return await self._filter(limit=limit, pagination=pagination)
+
+    async def filter_by_is_active(
+        self,
+        is_active: bool,
+        limit: int,
+        pagination: int,
+    ) -> tuple[Optional[list[Process]], int]:
+        return await self._filter(is_active=is_active, limit=limit, pagination=pagination)
