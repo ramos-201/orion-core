@@ -27,8 +27,8 @@ class BaseController(ABC):
         return kwargs
 
     async def _create(self, **kwargs: Any) -> MODEL:
+        kwargs_query = self._inject_user_in_kwargs_if_exists(**kwargs)
         try:
-            kwargs_query = self._inject_user_in_kwargs_if_exists(**kwargs)
             return await self._model.create(**kwargs_query)
         except IntegrityError as error:
             field_name = str(error).split()[-1].split('.')[-1]

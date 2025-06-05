@@ -44,7 +44,7 @@ async def resolve_get_processes(
     else:
         processes_obj, total = await process_controller.get_all(limit=limit, pagination=pagination)
 
-    if processes_obj:
-        return ProcessesPayloadType.to_result(total=total, processes=processes_obj)
+    if not processes_obj:
+        return None
 
-    return None
+    return ProcessesPayloadType.to_result(total=total, processes=processes_obj)

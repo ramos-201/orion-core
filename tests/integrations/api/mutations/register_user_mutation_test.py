@@ -62,7 +62,7 @@ async def test_register_user_successfully(client, initialize_db, mocker):
         'data': {
             'registerUser': {
                 'user': {
-                    'id': '1',
+                    'id': response_json['data']['registerUser']['user']['id'],
                     'username': variables['username'],
                     'name': variables['name'],
                     'email': variables['email'],

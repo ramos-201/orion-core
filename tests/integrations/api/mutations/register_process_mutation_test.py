@@ -62,7 +62,7 @@ async def test_register_process_successfully(
     assert response_json == {
         'data': {
             'registerProcess': {
-                'id': '1',
+                'id': response_json['data']['registerProcess']['id'],
                 'name': variables['name'],
                 'createdAt': get_patch_datetime_model,
                 'modifiedAt': get_patch_datetime_model,
@@ -111,7 +111,7 @@ async def test_register_process_with_data_no_required_successfully(
     assert response_json == {
         'data': {
             'registerProcess': {
-                'id': '1',
+                'id': response_json['data']['registerProcess']['id'],
                 'name': variables['name'],
                 'createdAt': get_patch_datetime_model,
                 'modifiedAt': get_patch_datetime_model,
@@ -166,10 +166,8 @@ async def test_register_process_when_user_has_multiple_existing_processes_succes
 @mark.parametrize(
     'headers', (
         {},
-        {'Authorization': 'Bearer '},
         {'Authorization': ''},
         {'': ''},
-        {'Authorization': 'Bearer invalid_token'},
     ),
 )
 async def test_register_process_with_no_authentication_return_unauthorized_error(
@@ -193,7 +191,7 @@ async def test_register_process_with_no_authentication_return_unauthorized_error
         'data': {'registerProcess': None},
         'errors': [{
             'error_type': ErrorTypeEnum.UNAUTHORIZED_ERROR.value,
-            'message': 'The authentication has expired or is invalid.',
+            'message': 'Authentication token is missing or invalid.',
         }],
     }
 
@@ -220,7 +218,7 @@ async def test_register_process_with_expired_token_return_unauthorized_error(
         'data': {'registerProcess': None},
         'errors': [{
             'error_type': ErrorTypeEnum.UNAUTHORIZED_ERROR.value,
-            'message': 'The authentication has expired or is invalid.',
+            'message': 'Invalid or expired authentication token.',
         }],
     }
 

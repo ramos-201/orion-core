@@ -1,3 +1,5 @@
+import uuid
+
 from factory import (
     Factory,
     SubFactory,
@@ -11,6 +13,7 @@ class UserFactory(Factory):
     class Meta:
         model = User
 
+    id = uuid.uuid4()
     created_at = '2025-01-01 12:00:00+00:00'
     modified_at = '2025-01-01 12:00:00+00:00'
     name = 'John'
@@ -26,6 +29,7 @@ class ProcessFactory(Factory):
     class Meta:
         model = Process
 
+    id = uuid.uuid4()
     created_at = '2025-01-01 12:00:00+00:00'
     modified_at = '2025-01-01 12:00:00+00:00'
     user = SubFactory(UserFactory)

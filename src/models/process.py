@@ -1,3 +1,5 @@
+import uuid
+
 from tortoise import (
     Model,
     fields,
@@ -5,7 +7,7 @@ from tortoise import (
 
 
 class Process(Model):
-    id = fields.IntField(pk=True, auto=True)
+    id = fields.UUIDField(pk=True, default=uuid.uuid4)
     created_at = fields.DatetimeField(auto_now_add=True)
     modified_at = fields.DatetimeField(auto_now=True)
     user = fields.ForeignKeyField(

@@ -1,3 +1,5 @@
+import uuid
+
 from tortoise import (
     fields,
     models,
@@ -5,7 +7,7 @@ from tortoise import (
 
 
 class User(models.Model):
-    id = fields.IntField(pk=True, auto=True)
+    id = fields.UUIDField(pk=True, default=uuid.uuid4)
     created_at = fields.DatetimeField(auto_now_add=True)
     modified_at = fields.DatetimeField(auto_now=True)
     name = fields.CharField(max_length=120)

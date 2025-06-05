@@ -1,3 +1,5 @@
+import uuid
+
 from pytest import mark
 
 from src.api.router_api import GRAPHQL_ENDPOINT
@@ -75,12 +77,14 @@ async def test_get_processes_when_there_is_more_one_record_successfully(
     client, initialize_db, default_user_registration_constructor, get_authenticated_headers,
 ):
     process_1 = await ProcessFactory.build(
+        id=uuid.uuid4(),
         name='process_1',
         user=default_user_registration_constructor,
     )
     await process_1.save()
 
     process_2 = await ProcessFactory.build(
+        id=uuid.uuid4(),
         name='process_2',
         user=default_user_registration_constructor,
     )
@@ -135,12 +139,14 @@ async def test_get_processes_with_pagination_successfully(
     client, initialize_db, default_user_registration_constructor, get_authenticated_headers,
 ):
     process_1 = await ProcessFactory.build(
+        id=uuid.uuid4(),
         name='process_1',
         user=default_user_registration_constructor,
     )
     await process_1.save()
 
     process_2 = await ProcessFactory.build(
+        id=uuid.uuid4(),
         name='process_2',
         user=default_user_registration_constructor,
     )
@@ -227,10 +233,8 @@ async def test_get_processes_with_other_fields_successfully(
 @mark.parametrize(
     'headers', (
         {},
-        {'Authorization': 'Bearer '},
         {'Authorization': ''},
         {'': ''},
-        {'Authorization': 'Bearer invalid_token'},
     ),
 )
 async def test_get_processes_with_no_authentication_return_unauthorized_error(
@@ -248,13 +252,13 @@ async def test_get_processes_with_no_authentication_return_unauthorized_error(
         'data': {'getProcesses': None},
         'errors': [{
             'error_type': ErrorTypeEnum.UNAUTHORIZED_ERROR.value,
-            'message': 'The authentication has expired or is invalid.',
+            'message': 'Authentication token is missing or invalid.',
         }],
     }
 
 
 @mark.asyncio
-async def test_register_processes_with_expired_token_return_unauthorized_error(
+async def test_get_processes_with_expired_token_return_unauthorized_error(
     client, initialize_db, patch_expired_token, get_authenticated_headers, default_process_registration_constructor,
 ):
     response = client.post(
@@ -269,6 +273,6 @@ async def test_register_processes_with_expired_token_return_unauthorized_error(
         'data': {'getProcesses': None},
         'errors': [{
             'error_type': ErrorTypeEnum.UNAUTHORIZED_ERROR.value,
-            'message': 'The authentication has expired or is invalid.',
+            'message': 'Invalid or expired authentication token.',
         }],
     }

@@ -4,6 +4,7 @@ from datetime import (
     timezone,
 )
 from typing import Optional
+from uuid import UUID
 
 import jwt
 
@@ -14,7 +15,7 @@ from configs import (
 )
 
 
-def create_access_token(user_id: int) -> str:
+def create_access_token(user_id: UUID) -> str:
     expire = datetime.now(timezone.utc) + timedelta(minutes=int(ACCESS_TOKEN_EXPIRE_MINUTES_TOKEN))
     payload = {
         'sub': str(user_id),
@@ -23,9 +24,10 @@ def create_access_token(user_id: int) -> str:
     return jwt.encode(payload, SECRET_KEY_TOKEN, algorithm=ALGORITHM_TOKEN)
 
 
-def decode_access_token(token: str) -> Optional[int]:
+def decode_access_token(token: str) -> Optional[str]:
     try:
         payload = jwt.decode(token, SECRET_KEY_TOKEN, algorithms=[ALGORITHM_TOKEN])
-        return int(payload.get('sub'))
     except (jwt.ExpiredSignatureError, jwt.InvalidTokenError):
         return None
+    else:
+        return payload.get('sub')
