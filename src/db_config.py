@@ -10,11 +10,12 @@ from configs import (
 )
 
 
-async def init_db() -> None:
+async def initialize_db() -> None:
     await Tortoise.init(
         db_url=f'postgres://{DB_USER}:{DB_PASSWORD}@{DB_URL}:{DB_PORT}/{DB_NAME}',
         modules={'models': ['src.models']},
     )
+
     if IS_DEBUG:
         await Tortoise.generate_schemas()
 

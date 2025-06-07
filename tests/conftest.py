@@ -9,6 +9,7 @@ from starlette.testclient import TestClient
 from tortoise import Tortoise
 
 from src.app import app
+from src.utils import jwt_handler
 from src.utils.jwt_handler import create_access_token
 from tests.factory_test import (
     ProcessFactory,
@@ -62,11 +63,8 @@ def get_patch_datetime_model(mocker):
 
 
 @fixture
-def patch_expired_token(monkeypatch):
-    monkeypatch.setattr(
-        'src.utils.jwt_handler.ACCESS_TOKEN_EXPIRE_MINUTES_TOKEN',
-        '-1',
-    )
+def patch_expired_token(mocker):
+    mocker.patch.object(jwt_handler, 'MINUTES_EXPIRATION_JWT', '-1')
 
 
 @pytest_asyncio.fixture

@@ -12,7 +12,7 @@ def get_error_formatter_gql(error: GraphQLError, _) -> dict[str, Any]:
 
     if isinstance(error, GraphQLError):
         raw_message = str(error.message)
-        message_error = re.sub(r"[\"']", '', raw_message)
+        message_error = re.sub(r"'([^']*)'", r'"\1"', raw_message)
 
         original_error = getattr(error, 'original_error', None)
 

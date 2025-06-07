@@ -9,13 +9,16 @@ from src.models import User
 from src.models.process import Process
 
 
+DEFAULT_DATETIME = '2025-01-01 12:00:00+00:00'
+
+
 class UserFactory(Factory):
     class Meta:
         model = User
 
     id = uuid.uuid4()
-    created_at = '2025-01-01 12:00:00+00:00'
-    modified_at = '2025-01-01 12:00:00+00:00'
+    created_at = DEFAULT_DATETIME
+    modified_at = DEFAULT_DATETIME
     name = 'John'
     last_name = 'Smith'
     username = 'john.smith'
@@ -30,8 +33,8 @@ class ProcessFactory(Factory):
         model = Process
 
     id = uuid.uuid4()
-    created_at = '2025-01-01 12:00:00+00:00'
-    modified_at = '2025-01-01 12:00:00+00:00'
+    created_at = DEFAULT_DATETIME
+    modified_at = DEFAULT_DATETIME
     user = SubFactory(UserFactory)
     name = 'name process example'
     description = 'This is a example description.'

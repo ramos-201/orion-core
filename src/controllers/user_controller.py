@@ -19,6 +19,8 @@ class UserController(BaseController):
             mobile_phone: str,
             password: str,
     ) -> User:
+        is_account_active = True
+
         return await self._create(
             name=name,
             last_name=last_name,
@@ -26,18 +28,18 @@ class UserController(BaseController):
             email=email,
             mobile_phone=mobile_phone,
             password=password,
-            is_account_active=True,
+            is_account_active=is_account_active,
         )
 
     async def get_user_by_credentials(
             self,
-            user: str,
+            identifier: str,
             password: str,
     ) -> Optional[User]:
         return await self._get_or_none(
-            Q(email=user) | Q(username=user),
+            Q(email=identifier) | Q(username=identifier),
             password=password,
         )
 
     async def get_user_by_id(self, user_id: str) -> Optional[User]:
-        return await self._get_or_none(id=user_id)
+        return await self._get_by_id(id=user_id)

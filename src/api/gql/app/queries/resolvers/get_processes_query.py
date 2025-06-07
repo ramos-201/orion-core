@@ -8,14 +8,14 @@ from src.api.gql.app.types.payloads.processes_payload_type import (
 )
 from src.controllers.process_controller import ProcessController
 from src.models import User
-from src.utils.auth_decorators import login_required
+from src.utils.login_required import login_required
 
 
 get_processes_type_gql = """
 getProcesses(
     isActive: Boolean
     limit: Int
-    pagination: Int
+    page: Int
 ): ProcessesPayloadType
 """
 
@@ -25,26 +25,26 @@ async def resolve_get_processes(
     _, info,
     is_active: Optional[bool] = None,
     limit: Optional[int] = None,
-    pagination: Optional[int] = None,
+    page: Optional[int] = None,
 ) -> Optional[dict[str, Any]]:
     # Get data by `User`
-    user_obj: User = info.context['user']
+    user: User = info.context['user']
 
-    process_controller = ProcessController(user=user_obj)
+    process_controller = ProcessController(user=user)
 
     limit = limit or 10
-    pagination = pagination or 0
+    page = page or 0
 
     if is_active is not None:
-        processes_obj, total = await process_controller.filter_by_is_active(
+        processes, total = await process_controller.filter_processes_by_is_active(
             is_active=is_active,
             limit=limit,
-            pagination=pagination,
+            page=page,
         )
     else:
-        processes_obj, total = await process_controller.get_all(limit=limit, pagination=pagination)
+        processes, total = await process_controller.get_all_processes(limit=limit, page=page)
 
-    if not processes_obj:
+    if not processes:
         return None
 
-    return ProcessesPayloadType.to_result(total=total, processes=processes_obj)
+    return ProcessesPayloadType.to_result(total=total, processes=processes)

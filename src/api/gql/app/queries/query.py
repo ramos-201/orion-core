@@ -8,7 +8,7 @@ from src.api.gql.app.queries.resolvers.get_processes_query import (
 )
 
 
-app_query = QueryType()
+query = QueryType()
 
-app_query.set_field('getProcess', resolve_get_process)
-app_query.set_field('getProcesses', resolve_get_processes)
+query.set_field('getProcess', resolve_get_process)
+query.set_field('getProcesses', resolve_get_processes)

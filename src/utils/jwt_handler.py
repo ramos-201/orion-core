@@ -9,25 +9,27 @@ from uuid import UUID
 import jwt
 
 from configs import (
-    ACCESS_TOKEN_EXPIRE_MINUTES_TOKEN,
-    ALGORITHM_TOKEN,
-    SECRET_KEY_TOKEN,
+    ALGORITHM_JWT,
+    MINUTES_EXPIRATION_JWT,
+    PRIVATE_KEY_JWT,
 )
 
 
 def create_access_token(user_id: UUID) -> str:
-    expire = datetime.now(timezone.utc) + timedelta(minutes=int(ACCESS_TOKEN_EXPIRE_MINUTES_TOKEN))
+    now = datetime.now(timezone.utc)
+    expiration = now + timedelta(minutes=int(MINUTES_EXPIRATION_JWT))
+
     payload = {
         'sub': str(user_id),
-        'exp': expire,
+        'exp': expiration,
     }
-    return jwt.encode(payload, SECRET_KEY_TOKEN, algorithm=ALGORITHM_TOKEN)
+
+    return jwt.encode(payload, PRIVATE_KEY_JWT, algorithm=ALGORITHM_JWT)
 
 
 def decode_access_token(token: str) -> Optional[str]:
     try:
-        payload = jwt.decode(token, SECRET_KEY_TOKEN, algorithms=[ALGORITHM_TOKEN])
+        payload = jwt.decode(token, PRIVATE_KEY_JWT, algorithms=[ALGORITHM_JWT])
+        return payload.get('sub')
     except (jwt.ExpiredSignatureError, jwt.InvalidTokenError):
         return None
-    else:
-        return payload.get('sub')

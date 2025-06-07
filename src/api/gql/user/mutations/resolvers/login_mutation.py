@@ -9,7 +9,7 @@ from src.utils.validate_data import validate_not_empty_fields
 
 login_type_gql = """
 login(
-    user: String!
+    identifier: String!
     password: String!
 ): UserPayloadType
 """
@@ -17,21 +17,21 @@ login(
 
 async def resolve_login(
     _, info,
-    user: str,
+    identifier: str,
     password: str,
 ) -> dict[str, Any]:
     validate_not_empty_fields(
-        user=user,
+        identifier=identifier,
         password=password,
     )
 
     user_controller = UserController()
 
-    user_obj = await user_controller.get_user_by_credentials(user=user, password=password)
+    user = await user_controller.get_user_by_credentials(identifier=identifier, password=password)
 
-    if not user_obj:
+    if not user:
         raise InvalidCredentialException(message='The credentials entered are not valid.')
 
-    token = create_access_token(user_id=user_obj.id)
+    token = create_access_token(user_id=user.id)
 
-    return UserPayloadType.to_result(user=user_obj, token=token)
+    return UserPayloadType.to_result(user=user, token=token)

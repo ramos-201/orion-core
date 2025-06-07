@@ -6,11 +6,11 @@ from src.utils.constants import ErrorTypeEnum
 
 mutation = """
 mutation login(
-    $user: String!
+    $identifier: String!
     $password: String!
 ) {
     login(
-        user: $user
+        identifier: $identifier
         password: $password
     ) {
         user {
@@ -43,7 +43,7 @@ async def test_login_successfully(
     )
 
     variables = {
-        'user': getattr(default_user_registration_constructor, user_field),
+        'identifier': getattr(default_user_registration_constructor, user_field),
         'password': default_user_registration_constructor.password,
     }
 
@@ -69,7 +69,7 @@ async def test_login_successfully(
 
 def test_login_with_null_required_variables_returns_internal_error(client):
     variables = {
-        'user': None,
+        'identifier': None,
         'password': None,
     }
 
@@ -82,10 +82,10 @@ def test_login_with_null_required_variables_returns_internal_error(client):
         'errors': [
             {
                 'error_type': ErrorTypeEnum.INTERNAL_ERROR.value,
-                'message': 'Variable $user of non-null type String! must not be null.',
+                'message': 'Variable "$identifier" of non-null type "String!" must not be null.',
             }, {
                 'error_type': ErrorTypeEnum.INTERNAL_ERROR.value,
-                'message': 'Variable $password of non-null type String! must not be null.',
+                'message': 'Variable "$password" of non-null type "String!" must not be null.',
             },
         ],
     }
@@ -93,7 +93,7 @@ def test_login_with_null_required_variables_returns_internal_error(client):
 
 def test_login_with_empty_required_variables_returns_empty_data_error(client):
     variables = {
-        'user': '',
+        'identifier': '',
         'password': '',
     }
 
@@ -105,7 +105,7 @@ def test_login_with_empty_required_variables_returns_empty_data_error(client):
         'data': {'login': None},
         'errors': [{
             'error_type': ErrorTypeEnum.EMPTY_DATA_ERROR.value,
-            'message': 'The following fields cannot be empty: [user, password].',
+            'message': 'The following fields cannot be empty: ["identifier", "password"].',
         }],
     }
 
@@ -123,7 +123,7 @@ async def test_login_with_invalid_credentials_returns_invalid_credentials_error(
     client, initialize_db, default_user_registration_constructor, password_field, user_field,
 ):
     variables = {
-        'user': getattr(default_user_registration_constructor, user_field, 'user_not_exist'),
+        'identifier': getattr(default_user_registration_constructor, user_field, 'user_not_exist'),
         'password': getattr(default_user_registration_constructor, password_field, 'wrong_password'),
     }
 

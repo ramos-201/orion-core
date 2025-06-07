@@ -6,7 +6,7 @@ from typing import (
 from src.api.gql.app.types.schemes_type.process_type import ProcessType
 from src.controllers.process_controller import ProcessController
 from src.models import User
-from src.utils.auth_decorators import login_required
+from src.utils.login_required import login_required
 from src.utils.validate_data import validate_not_empty_fields
 
 
@@ -29,14 +29,14 @@ async def resolve_register_process(
     validate_not_empty_fields(name=name)
 
     # Create data by `User`
-    user_obj: User = info.context['user']
+    user: User = info.context['user']
 
-    process_controller = ProcessController(user=user_obj)
+    process_controller = ProcessController(user=user)
 
-    process_obj = await process_controller.create_process(
+    process = await process_controller.create_process(
         name=name,
         description=description,
         is_active=is_active,
     )
 
-    return ProcessType.to_result(process=process_obj)
+    return ProcessType.to_result(process=process)

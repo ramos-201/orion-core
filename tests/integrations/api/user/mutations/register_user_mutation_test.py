@@ -28,6 +28,7 @@ mutation registerUser(
             id
             username
             name
+            lastName
             email
             mobilePhone
         }
@@ -65,6 +66,7 @@ async def test_register_user_successfully(client, initialize_db, mocker):
                     'id': response_json['data']['registerUser']['user']['id'],
                     'username': variables['username'],
                     'name': variables['name'],
+                    'lastName': variables['lastName'],
                     'email': variables['email'],
                     'mobilePhone': variables['mobilePhone'],
                 },
@@ -104,22 +106,22 @@ def test_register_user_with_null_required_variables_returns_internal_error(clien
         'errors': [
             {
                 'error_type': ErrorTypeEnum.INTERNAL_ERROR.value,
-                'message': 'Variable $name of non-null type String! must not be null.',
+                'message': 'Variable "$name" of non-null type "String!" must not be null.',
             }, {
                 'error_type': ErrorTypeEnum.INTERNAL_ERROR.value,
-                'message': 'Variable $lastName of non-null type String! must not be null.',
+                'message': 'Variable "$lastName" of non-null type "String!" must not be null.',
             }, {
                 'error_type': ErrorTypeEnum.INTERNAL_ERROR.value,
-                'message': 'Variable $username of non-null type String! must not be null.',
+                'message': 'Variable "$username" of non-null type "String!" must not be null.',
             }, {
                 'error_type': ErrorTypeEnum.INTERNAL_ERROR.value,
-                'message': 'Variable $email of non-null type String! must not be null.',
+                'message': 'Variable "$email" of non-null type "String!" must not be null.',
             }, {
                 'error_type': ErrorTypeEnum.INTERNAL_ERROR.value,
-                'message': 'Variable $mobilePhone of non-null type String! must not be null.',
+                'message': 'Variable "$mobilePhone" of non-null type "String!" must not be null.',
             }, {
                 'error_type': ErrorTypeEnum.INTERNAL_ERROR.value,
-                'message': 'Variable $password of non-null type String! must not be null.',
+                'message': 'Variable "$password" of non-null type "String!" must not be null.',
             },
         ],
     }
@@ -143,8 +145,8 @@ def test_register_user_with_empty_required_variables_returns_empty_data_error(cl
         'data': {'registerUser': None},
         'errors': [{
             'error_type': ErrorTypeEnum.EMPTY_DATA_ERROR.value,
-            'message': 'The following fields cannot be empty: [name, last_name, username, email, mobile_phone, '
-                       'password].',
+            'message': 'The following fields cannot be empty: ["name", "last_name", "username", "email", '
+                       '"mobile_phone", "password"].',
         }],
     }
 
@@ -170,6 +172,6 @@ async def test_register_user_when_unique_fields_exist_in_user_model_returns_dupl
         'data': {'registerUser': None},
         'errors': [{
             'error_type': ErrorTypeEnum.DUPLICATE_FIELD_ERROR.value,
-            'message': 'The data for the field mobile_phone already exists.',
+            'message': 'The data for the field "mobile_phone" already exists.',
         }],
     }

@@ -5,7 +5,7 @@ from src.api.gql.app.mutations.resolvers.register_process_mutation import (
 )
 
 
-app_mutation = MutationType()
+mutation = MutationType()
 
 
-app_mutation.set_field('registerProcess', resolve_register_process)
+mutation.set_field('registerProcess', resolve_register_process)

@@ -8,8 +8,8 @@ from src.utils.jwt_handler import decode_access_token
 def login_required(resolver):
     @wraps(resolver)
     async def wrapper(obj, info, **kwargs):
-        request = info.context.get('request')
-        auth_header = request.headers.get('Authorization', '')
+        request = info.context['request']
+        auth_header = request.headers.get('Authorization', '').strip()
 
         if not auth_header.startswith('Bearer '):
             raise UnauthorizedException(message='Authentication token is missing or invalid.')
@@ -20,12 +20,13 @@ def login_required(resolver):
         if not user_id:
             raise UnauthorizedException(message='Invalid or expired authentication token.')
 
-        user = await UserController().get_user_by_id(user_id=user_id)
+        user_controller = UserController()
+        user_obj = await user_controller.get_user_by_id(user_id=user_id)
 
-        if not user:
+        if not user_obj:
             raise UnauthorizedException(message='Authenticated user does not exist.')
 
-        info.context['user'] = user
-        return await resolver(obj, info, **kwargs)
+        info.context['user'] = user_obj
 
+        return await resolver(obj, info, **kwargs)
     return wrapper

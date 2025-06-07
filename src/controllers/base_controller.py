@@ -27,9 +27,10 @@ class BaseController(ABC):
         return kwargs
 
     async def _create(self, **kwargs: Any) -> MODEL:
-        kwargs_query = self._inject_user_in_kwargs_if_exists(**kwargs)
+        inject_kwargs = self._inject_user_in_kwargs_if_exists(**kwargs)
+
         try:
-            return await self._model.create(**kwargs_query)
+            return await self._model.create(**inject_kwargs)
         except IntegrityError as error:
             field_name = str(error).split()[-1].split('.')[-1]
             raise DuplicateFieldException(message=f'The data for the field "{field_name}" already exists.')
@@ -40,10 +41,22 @@ class BaseController(ABC):
         except ValueError:
             return None
 
-    async def _filter(self, limit: int, pagination: int, *args: Q, **kwargs: Any) -> tuple[list[MODEL], int]:
-        offset = pagination * limit
-        kwargs = self._inject_user_in_kwargs_if_exists(**kwargs)
-        query = self._model.filter(*args, **kwargs)
-        total = await query.count()
+    async def _get_by_id(self, id: str) -> Optional[User]:
+        return await self._get_or_none(id=id)
+
+    async def _filter(
+        self,
+        limit: int,
+        page: int,
+        *args: Q,
+        **kwargs: Any,
+    ) -> tuple[list[MODEL], int]:
+        # TODO: validate, inject user in args (Q)
+        inject_kwargs = self._inject_user_in_kwargs_if_exists(**kwargs)
+        query = self._model.filter(*args, **inject_kwargs)
+
+        offset = page * limit
         results = await query.offset(offset).limit(limit)
+        total = await query.count()
+
         return results, total

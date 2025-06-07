@@ -8,6 +8,7 @@ class UserType(GraphQLTypeAbs):
         id: String!
         username: String!
         name: String!
+        lastName: String!
         email: String!
         mobilePhone: String!
     }
@@ -19,6 +20,7 @@ class UserType(GraphQLTypeAbs):
             'id': user.id,
             'username': user.username,
             'name': user.name,
+            'last_name': user.last_name,
             'email': user.email,
             'mobile_phone': user.mobile_phone,
         }

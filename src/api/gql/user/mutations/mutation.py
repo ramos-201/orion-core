@@ -6,7 +6,7 @@ from src.api.gql.user.mutations.resolvers.register_user_mutation import (
 )
 
 
-user_mutation = MutationType()
+mutation = MutationType()
 
-user_mutation.set_field('registerUser', resolve_register_user)
-user_mutation.set_field('login', resolve_login)
+mutation.set_field('registerUser', resolve_register_user)
+mutation.set_field('login', resolve_login)

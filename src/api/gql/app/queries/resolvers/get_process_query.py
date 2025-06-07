@@ -6,7 +6,7 @@ from typing import (
 from src.api.gql.app.types.schemes_type.process_type import ProcessType
 from src.controllers.process_controller import ProcessController
 from src.models import User
-from src.utils.auth_decorators import login_required
+from src.utils.login_required import login_required
 
 
 get_process_type_gql = """
@@ -24,18 +24,18 @@ async def resolve_get_process(
     name: Optional[str] = None,
 ) -> Optional[dict[str, Any]]:
     # Get data by `User`
-    user_obj: User = info.context['user']
+    user: User = info.context['user']
 
-    process_controller = ProcessController(user=user_obj)
+    process_controller = ProcessController(user=user)
 
-    process_obj = None
+    process = None
 
     if id:
-        process_obj = await process_controller.get_process_by_id(id=id)
+        process = await process_controller.get_process_by_id(process_id=id)
     elif name:
-        process_obj = await process_controller.get_process_by_name(name=name)
+        process = await process_controller.get_process_by_name(name=name)
 
-    if not process_obj:
+    if not process:
         return None
 
-    return ProcessType().to_result(process=process_obj)
+    return ProcessType().to_result(process=process)

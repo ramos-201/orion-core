@@ -38,7 +38,7 @@ async def resolve_register_user(
 
     user_controller = UserController()
 
-    user_obj = await user_controller.create_user(
+    user = await user_controller.create_user(
         name=name,
         last_name=last_name,
         username=username,
@@ -47,6 +47,6 @@ async def resolve_register_user(
         password=password,
     )
 
-    token = create_access_token(user_id=user_obj.id)
+    token = create_access_token(user_id=user.id)
 
-    return UserPayloadType.to_result(user=user_obj, token=token)
+    return UserPayloadType.to_result(user=user, token=token)

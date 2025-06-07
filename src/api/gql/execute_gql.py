@@ -4,23 +4,24 @@ from ariadne import (
     graphql,
     make_executable_schema,
 )
+from ariadne.executable_schema import SchemaBindables
 from ariadne.types import GraphQLResult
 
-from src.api.gql.app.mutations.mutations import app_mutation
-from src.api.gql.app.queries.query import app_query
-from src.api.gql.app.typedef import app_typedefs
-from src.api.gql.user.mutations.mutation import user_mutation
-from src.api.gql.user.queries.query import user_query
-from src.api.gql.user.typedef import user_typedefs
+from src.api.gql.app.mutations.mutations import mutation as app_mutation
+from src.api.gql.app.queries.query import query as app_query
+from src.api.gql.app.typedef import typedefs as app_typedefs
+from src.api.gql.user.mutations.mutation import mutation as user_mutation
+from src.api.gql.user.queries.query import query as user_query
+from src.api.gql.user.typedef import typedefs as user_typedefs
 from src.api.gql.utils.error_formatter_gql import get_error_formatter_gql
 
 
 async def _execute_gql_request(
     payload: dict[str, Any],
     context: dict[str, Any],
-    typedefs: Any,
-    query: Any,
-    mutation: Any,
+    typedefs: str,
+    query: SchemaBindables,
+    mutation: SchemaBindables,
 ) -> GraphQLResult:
     schema = make_executable_schema(
         typedefs,

@@ -18,5 +18,5 @@ class GraphQLTypeAbs(ABC):
 
     @classmethod
     @abstractmethod
-    def to_result(cls, *values: Any, **kwargs: Any) -> dict[str, Any]:
+    def to_result(cls, *args: Any, **kwargs: Any) -> dict[str, Any]:
         pass

@@ -11,12 +11,12 @@ query = """
 query getProcesses(
     $isActive: Boolean
     $limit: Int
-    $pagination: Int
+    $page: Int
 ) {
     getProcesses(
         isActive: $isActive
         limit: $limit
-        pagination: $pagination
+        page: $page
     ) {
         total
         processes {
@@ -154,7 +154,7 @@ async def test_get_processes_with_pagination_successfully(
 
     response_1 = client.post(
         APP_GQL_ENDPOINT,
-        json={'query': query, 'variables': {'limit': 2, 'pagination': 0}},
+        json={'query': query, 'variables': {'limit': 2, 'page': 0}},
         headers=get_authenticated_headers,
     )
     assert response_1.status_code == 200
@@ -165,7 +165,7 @@ async def test_get_processes_with_pagination_successfully(
 
     response_2 = client.post(
         APP_GQL_ENDPOINT,
-        json={'query': query, 'variables': {'limit': 2, 'pagination': 1}},
+        json={'query': query, 'variables': {'limit': 2, 'page': 1}},
         headers=get_authenticated_headers,
     )
     assert response_2.status_code == 200
@@ -202,7 +202,7 @@ async def test_get_processes_when_null_variables_successfully(
 ):
     response = client.post(
         APP_GQL_ENDPOINT,
-        json={'query': query, 'variables': {'isActive': None, 'limit': None, 'pagination': None}},
+        json={'query': query, 'variables': {'isActive': None, 'limit': None, 'page': None}},
         headers=get_authenticated_headers,
     )
     assert response.status_code == 200

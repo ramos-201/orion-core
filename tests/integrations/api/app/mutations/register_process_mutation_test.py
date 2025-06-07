@@ -243,7 +243,7 @@ def test_register_process_with_null_variables_return_internal_error(client, init
         'data': None,
         'errors': [{
             'error_type': ErrorTypeEnum.INTERNAL_ERROR.value,
-            'message': 'Variable $name of non-null type String! must not be null.',
+            'message': 'Variable "$name" of non-null type "String!" must not be null.',
         }],
     }
 
@@ -270,7 +270,7 @@ async def test_register_process_with_empty_variables_return_empty_data_error(
         'data': {'registerProcess': None},
         'errors': [{
             'error_type': ErrorTypeEnum.EMPTY_DATA_ERROR.value,
-            'message': 'The following fields cannot be empty: [name].',
+            'message': 'The following fields cannot be empty: ["name"].',
         }],
     }
 
@@ -297,6 +297,6 @@ async def test_register_process_when_unique_fields_exist_in_process_model_return
         'data': {'registerProcess': None},
         'errors': [{
             'error_type': ErrorTypeEnum.DUPLICATE_FIELD_ERROR.value,
-            'message': 'The data for the field name already exists.',
+            'message': 'The data for the field "name" already exists.',
         }],
     }

@@ -29,6 +29,6 @@ type Mutation {{
 }}
 """
 
-user_typedefs = gql(_query_type_def + _mutation_type_def + _schema_type_def + _payload_type_def)
+typedefs = gql(_query_type_def + _mutation_type_def + _schema_type_def + _payload_type_def)
 
-__all__ = ['user_typedefs']
+__all__ = ['typedefs']
