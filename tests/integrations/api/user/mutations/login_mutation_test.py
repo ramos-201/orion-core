@@ -14,7 +14,6 @@ mutation login(
         password: $password
     ) {
         user {
-            id
             username
             name
             email
@@ -55,7 +54,6 @@ async def test_login_successfully(
         'data': {
             'login': {
                 'user': {
-                    'id': str(default_user_registration_constructor.id),
                     'username': default_user_registration_constructor.username,
                     'name': default_user_registration_constructor.name,
                     'email': default_user_registration_constructor.email,

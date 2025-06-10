@@ -25,7 +25,6 @@ mutation registerUser(
         password: $password
     ) {
         user {
-            id
             username
             name
             lastName
@@ -63,7 +62,6 @@ async def test_register_user_successfully(client, initialize_db, mocker):
         'data': {
             'registerUser': {
                 'user': {
-                    'id': response_json['data']['registerUser']['user']['id'],
                     'username': variables['username'],
                     'name': variables['name'],
                     'lastName': variables['lastName'],
@@ -75,7 +73,7 @@ async def test_register_user_successfully(client, initialize_db, mocker):
         },
     }
 
-    user = await User.get(id=response_json['data']['registerUser']['user']['id'])
+    user = await User.get(name=variables['name'])
     assert user.name == variables['name']
     assert user.last_name == variables['lastName']
     assert user.username == variables['username']

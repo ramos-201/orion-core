@@ -5,7 +5,6 @@ from src.models import User
 class UserType(GraphQLTypeAbs):
     type_def_gql = """
     type UserType {
-        id: String!
         username: String!
         name: String!
         lastName: String!
@@ -17,7 +16,6 @@ class UserType(GraphQLTypeAbs):
     @classmethod
     def to_result(cls, user: User) -> dict[str, str]:
         return {
-            'id': user.id,
             'username': user.username,
             'name': user.name,
             'last_name': user.last_name,

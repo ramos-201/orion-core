@@ -9,6 +9,7 @@ from src.api.gql.app.queries.resolvers.get_process_query import (
 from src.api.gql.app.queries.resolvers.get_processes_query import (
     get_processes_type_gql,
 )
+from src.api.gql.app.queries.resolvers.get_user_query import get_user_type_gql
 from src.api.gql.app.types.payloads.process_payload_type import (
     ProcessPayloadType,
 )
@@ -16,9 +17,11 @@ from src.api.gql.app.types.payloads.processes_payload_type import (
     ProcessesPayloadType,
 )
 from src.api.gql.app.types.schemes_type.process_type import ProcessType
+from src.api.gql.user.types.schemes_type.user_type import UserType
 
 
 _schema_type_def = '\n'.join([
+    UserType.type_def_gql.strip(),
     ProcessType.type_def_gql.strip(),
 ])
 
@@ -31,6 +34,7 @@ _query_type_def = f"""
 type Query {{
     {get_process_type_gql.strip()}
     {get_processes_type_gql.strip()}
+    {get_user_type_gql.strip()}
 }}
 """
 
