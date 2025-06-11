@@ -28,7 +28,7 @@ async def resolve_register_process(
 ) -> dict[str, Any]:
     validate_not_empty_fields(name=name)
 
-    # Create data by `User`
+    # Get data by `User`
     user: User = info.context['user']
 
     process_controller = ProcessController(user=user)
