@@ -3,14 +3,13 @@ from typing import (
     Optional,
 )
 
-from tortoise.exceptions import IntegrityError
-
 from src.api.gql.user.types.schemes_type.user_type import UserType
-from src.models import User
-from src.utils.exceptions import (
-    DuplicateFieldException,
-    EmptyDataException,
+from src.controllers.base_controller import (
+    apply_valid_updates_or_fail,
+    safe_save,
 )
+from src.models import User
+from src.utils.format_date import get_current_datetime
 from src.utils.login_required import login_required
 
 
@@ -30,19 +29,17 @@ async def resolve_update_user(
     last_name: Optional[str] = None,
     mobile_phone: Optional[str] = None,
 ) -> dict[str, Any]:
-    if not any([name, last_name, mobile_phone]):
-        raise EmptyDataException(message='There is no data to update.')
-
     # Get data by `User`
     user: User = info.context['user']
 
-    user.name = name or user.name
-    user.last_name = last_name or user.last_name
-    user.mobile_phone = mobile_phone or user.mobile_phone
+    fields_to_update = {
+        'name': name,
+        'last_name': last_name,
+        'mobile_phone': mobile_phone,
+    }
+    apply_valid_updates_or_fail(fields_to_update, user)
 
-    try:
-        await user.save()
-    except IntegrityError:
-        raise DuplicateFieldException(message='The data for the field "mobile_phone" already exists.')
+    user.modified_at = get_current_datetime()
+    await safe_save(instance=user)
 
     return UserType.to_result(user=user)

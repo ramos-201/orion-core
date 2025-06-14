@@ -2,6 +2,9 @@
 - [ ] (Optional) Add functionality for the `active` field in the user model (True/False).
 - [ ] Validate user's phone format.
 
+## Models
+- [ ] Validate not null fields
+
 ## Models | Users | Tests
 - [ ] Create tests to validate creation of users with active/inactive states.
 

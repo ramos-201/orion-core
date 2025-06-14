@@ -1,5 +1,6 @@
 import uuid
 
+from _pytest.fixtures import fixture
 from pytest import mark
 
 from src.api.router_api import APP_GQL_ENDPOINT
@@ -29,16 +30,19 @@ mutation updateUser(
 """
 
 
-@mark.asyncio
-async def test_update_user_successfully(
-    client, initialize_db, get_authenticated_headers, default_user_registration_constructor,
-):
-    variables = {
-        'name': 'New name',
-        'lastName': 'New last name',
+@fixture
+def variables():
+    return {
+        'name': 'New name example',
+        'lastName': 'New last name example',
         'mobilePhone': '3122222222',
     }
 
+
+@mark.asyncio
+async def test_update_user_successfully(
+    client, variables, initialize_db, get_authenticated_headers, default_user_registration_constructor,
+):
     response = client.post(
         APP_GQL_ENDPOINT,
         json={'query': mutation, 'variables': variables},
@@ -80,14 +84,12 @@ async def test_update_user_successfully(
 )
 @mark.asyncio
 async def test_update_user_with_null_variable_successfully(
-    client, initialize_db, get_authenticated_headers, default_user_registration_constructor,
+    client, variables, initialize_db, get_authenticated_headers, default_user_registration_constructor,
     name_variable, last_name_variable, mobile_phone_variable,
 ):
-    variables = {
-        'name': name_variable,
-        'lastName': last_name_variable,
-        'mobilePhone': mobile_phone_variable,
-    }
+    variables['name'] = name_variable
+    variables['lastName'] = last_name_variable
+    variables['mobilePhone'] = mobile_phone_variable
 
     response = client.post(
         APP_GQL_ENDPOINT,
@@ -105,19 +107,21 @@ async def test_update_user_with_null_variable_successfully(
 
 @mark.asyncio
 async def test_update_user_with_unique_fields_exist_in_user_model_return_duplicate_field_error(
-    client, initialize_db, get_authenticated_headers, default_user_registration_constructor,
+    client, variables, initialize_db, get_authenticated_headers, default_user_registration_constructor,
 ):
     new_user = UserFactory.build(
         id=uuid.uuid4(),
-        username='New user',
-        email='new_email@example.com',
-        mobile_phone='3122222222',
+        username='username_example',
+        email='example@example.com',
+        name=variables['name'],
+        last_name=variables['lastName'],
+        mobile_phone=variables['mobilePhone'],
     )
     await new_user.save()
 
     response = client.post(
         APP_GQL_ENDPOINT,
-        json={'query': mutation, 'variables': {'mobilePhone': new_user.mobile_phone}},
+        json={'query': mutation, 'variables': variables},
         headers=get_authenticated_headers,
     )
     assert response.status_code == 200
@@ -132,7 +136,7 @@ async def test_update_user_with_unique_fields_exist_in_user_model_return_duplica
 
 
 @mark.asyncio
-async def test_update_user_with_empty_variables_return_empty_data_error(
+async def test_update_user_with_not_variables_return_empty_data_error(
     client, initialize_db, get_authenticated_headers, default_user_registration_constructor,
 ):
     response = client.post(
@@ -146,7 +150,7 @@ async def test_update_user_with_empty_variables_return_empty_data_error(
         'data': {'updateUser': None},
         'errors': [{
             'error_type': ErrorTypeEnum.EMPTY_DATA_ERROR.value,
-            'message': 'There is no data to update.',
+            'message': 'No valid data was submitted for update.',
         }],
     }
 
@@ -160,11 +164,11 @@ async def test_update_user_with_empty_variables_return_empty_data_error(
     ),
 )
 async def test_update_user_with_no_authentication_return_unauthorized_error(
-    client, initialize_db, get_authenticated_headers, headers,
+    client, variables, initialize_db, get_authenticated_headers, headers,
 ):
     response = client.post(
         APP_GQL_ENDPOINT,
-        json={'query': mutation, 'variables': {'name': 'New name'}},
+        json={'query': mutation, 'variables': variables},
         headers=headers,
     )
     assert response.status_code == 200
@@ -181,11 +185,11 @@ async def test_update_user_with_no_authentication_return_unauthorized_error(
 
 @mark.asyncio
 async def test_update_user_with_expired_token_return_unauthorized_error(
-    client, initialize_db, patch_expired_token, get_authenticated_headers,
+    client, variables, initialize_db, patch_expired_token, get_authenticated_headers,
 ):
     response = client.post(
         APP_GQL_ENDPOINT,
-        json={'query': mutation, 'variables': {'name': 'New name'}},
+        json={'query': mutation, 'variables': variables},
         headers=get_authenticated_headers,
     )
     assert response.status_code == 200
@@ -200,13 +204,19 @@ async def test_update_user_with_expired_token_return_unauthorized_error(
     }
 
 
+@mark.parametrize(
+    'field_variable', (
+        None,
+        '',
+    ),
+)
 @mark.asyncio
-def test_update_user_with_null_variables_return_empty_data_error(client, initialize_db, get_authenticated_headers):
-    variables = {
-        'name': None,
-        'lastName': None,
-        'mobilePhone': None,
-    }
+async def test_update_user_with_empty_variables_return_empty_data_error(
+    client, variables, initialize_db, get_authenticated_headers, field_variable,
+):
+    variables['name'] = field_variable
+    variables['lastName'] = field_variable
+    variables['mobilePhone'] = field_variable
 
     response = client.post(
         APP_GQL_ENDPOINT,
@@ -220,6 +230,6 @@ def test_update_user_with_null_variables_return_empty_data_error(client, initial
         'data': {'updateUser': None},
         'errors': [{
             'error_type': ErrorTypeEnum.EMPTY_DATA_ERROR.value,
-            'message': 'There is no data to update.',
+            'message': 'No valid data was submitted for update.',
         }],
     }

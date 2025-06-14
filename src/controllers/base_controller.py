@@ -12,7 +12,30 @@ from tortoise.expressions import Q
 from tortoise.models import MODEL
 
 from src.models import User
-from src.utils.exceptions import DuplicateFieldException
+from src.utils.exceptions import (
+    DuplicateFieldException,
+    EmptyDataException,
+)
+from src.utils.validate_data import is_value_null_or_empty
+
+
+async def safe_save(instance: MODEL) -> None:
+    try:
+        await instance.save()
+    except IntegrityError as error:
+        field_name = str(error).split()[-1].split('.')[-1]
+        raise DuplicateFieldException(message=f'The data for the field "{field_name}" already exists.')
+
+
+def apply_valid_updates_or_fail(fields: dict, instance: MODEL) -> None:
+    updated = False
+    for field, value in fields.items():
+        if not is_value_null_or_empty(value):
+            setattr(instance, field, value)
+            updated = True
+
+    if not updated:
+        raise EmptyDataException('No valid data was submitted for update.')
 
 
 class BaseController(ABC):
@@ -30,6 +53,7 @@ class BaseController(ABC):
         inject_kwargs = self._inject_user_in_kwargs_if_exists(**kwargs)
 
         try:
+            # TODO: validate not null fields
             return await self._model.create(**inject_kwargs)
         except IntegrityError as error:
             field_name = str(error).split()[-1].split('.')[-1]
@@ -37,7 +61,8 @@ class BaseController(ABC):
 
     async def _get_or_none(self, *args: Q, **kwargs: Any) -> Optional[MODEL]:
         try:
-            return await self._model.get_or_none(*args, **kwargs)
+            inject_kwargs = self._inject_user_in_kwargs_if_exists(**kwargs)
+            return await self._model.get_or_none(*args, **inject_kwargs)
         except ValueError:
             return None
 
@@ -51,7 +76,6 @@ class BaseController(ABC):
         *args: Q,
         **kwargs: Any,
     ) -> tuple[list[MODEL], int]:
-        # TODO: validate, inject user in args (Q)
         inject_kwargs = self._inject_user_in_kwargs_if_exists(**kwargs)
         query = self._model.filter(*args, **inject_kwargs)
 

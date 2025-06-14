@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from pytest import mark
+from pytest_asyncio import fixture
 
 from src.api.router_api import APP_GQL_ENDPOINT
 from src.models.process import Process
@@ -29,6 +30,15 @@ mutation registerProcess(
 """
 
 
+@fixture
+def variables():
+    return {
+        'name': 'name process example',
+        'description': 'description process example',
+        'isActive': True,
+    }
+
+
 @mark.asyncio
 @mark.parametrize(
     'description_value, is_active_value, expected_result_is_active', (
@@ -42,14 +52,11 @@ mutation registerProcess(
     ),
 )
 async def test_register_process_successfully(
-    client, initialize_db, get_patch_datetime_model, get_authenticated_headers, default_user_registration_constructor,
-    description_value, is_active_value, expected_result_is_active,
+    client, variables, initialize_db, get_patch_datetime_model, get_authenticated_headers,
+    default_user_registration_constructor, description_value, is_active_value, expected_result_is_active,
 ):
-    variables = {
-        'name': 'name process example',
-        'description': description_value,
-        'isActive': is_active_value,
-    }
+    variables['description'] = description_value
+    variables['isActive'] = is_active_value
 
     response = client.post(
         APP_GQL_ENDPOINT,
@@ -127,24 +134,18 @@ async def test_register_process_with_data_no_required_successfully(
 
 @mark.asyncio
 async def test_register_process_when_user_has_multiple_existing_processes_successfully(
-    client, initialize_db, get_authenticated_headers, default_user_registration_constructor,
+    client, variables, initialize_db, get_authenticated_headers, default_user_registration_constructor,
 ):
-    variables_process_1 = {
-        'name': 'name process example 1',
-        'description': 'This a example description.',
-        'isActive': True,
-    }
-
     response_process_1 = client.post(
         APP_GQL_ENDPOINT,
-        json={'query': mutation, 'variables': variables_process_1},
+        json={'query': mutation, 'variables': variables},
         headers=get_authenticated_headers,
     )
     assert response_process_1.status_code == 200
 
     variables_process_2 = {
         'name': 'name process example 2',
-        'description': 'This a example description.',
+        'description': 'This a example description 2.',
         'isActive': True,
     }
 
@@ -158,7 +159,7 @@ async def test_register_process_when_user_has_multiple_existing_processes_succes
     processes = await Process.filter(user_id=default_user_registration_constructor.id)
     assert len(processes) == 2
 
-    assert processes[0].name == variables_process_1['name']
+    assert processes[0].name == variables['name']
     assert processes[1].name == variables_process_2['name']
 
 
@@ -171,14 +172,8 @@ async def test_register_process_when_user_has_multiple_existing_processes_succes
     ),
 )
 async def test_register_process_with_no_authentication_return_unauthorized_error(
-    client, initialize_db, get_authenticated_headers, headers,
+    client, variables, initialize_db, get_authenticated_headers, headers,
 ):
-    variables = {
-        'name': 'name process example',
-        'description': 'This is a example description.',
-        'isActive': True,
-    }
-
     response = client.post(
         APP_GQL_ENDPOINT,
         json={'query': mutation, 'variables': variables},
@@ -198,14 +193,8 @@ async def test_register_process_with_no_authentication_return_unauthorized_error
 
 @mark.asyncio
 async def test_register_process_with_expired_token_return_unauthorized_error(
-    client, initialize_db, patch_expired_token, get_authenticated_headers,
+    client, variables, initialize_db, patch_expired_token, get_authenticated_headers,
 ):
-    variables = {
-        'name': 'name process example',
-        'description': 'This is a example description.',
-        'isActive': True,
-    }
-
     response = client.post(
         APP_GQL_ENDPOINT,
         json={'query': mutation, 'variables': variables},
@@ -224,11 +213,13 @@ async def test_register_process_with_expired_token_return_unauthorized_error(
 
 
 @mark.asyncio
-def test_register_process_with_null_variables_return_internal_error(client, initialize_db, get_authenticated_headers):
+def test_register_process_with_null_variables_return_internal_error(
+    client, initialize_db, get_authenticated_headers,
+):
     variables = {
         'name': None,
-        'description': '<Optional>',
-        'isActive': bool('<Optional>'),
+        'description': None,
+        'isActive': None,
     }
 
     response = client.post(
@@ -254,8 +245,8 @@ async def test_register_process_with_empty_variables_return_empty_data_error(
 ):
     variables = {
         'name': '',
-        'description': '<Optional>',
-        'isActive': bool('<Optional>'),
+        'description': '',
+        'isActive': bool(''),
     }
 
     response = client.post(
@@ -277,13 +268,11 @@ async def test_register_process_with_empty_variables_return_empty_data_error(
 
 @mark.asyncio
 async def test_register_process_when_unique_fields_exist_in_process_model_returns_duplicate_field_error(
-    client, initialize_db, get_authenticated_headers, default_process_registration_constructor,
+    client, variables, initialize_db, get_authenticated_headers, default_process_registration_constructor,
 ):
-    variables = {
-        'name': default_process_registration_constructor.name,
-        'description': default_process_registration_constructor.description,
-        'isActive': default_process_registration_constructor.is_active,
-    }
+    variables['name'] = default_process_registration_constructor.name
+    variables['description'] = default_process_registration_constructor.description
+    variables['isActive'] = default_process_registration_constructor.is_active
 
     response = client.post(
         APP_GQL_ENDPOINT,
