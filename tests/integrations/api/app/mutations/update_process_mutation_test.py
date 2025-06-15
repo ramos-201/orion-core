@@ -247,7 +247,7 @@ async def test_update_process_with_empty_variables_return_empty_data_error(
 
 
 @mark.asyncio
-async def test_update_process_with_id_not_exist_return_(
+async def test_update_process_with_id_not_exist_return_empty_data_error(
     client, variables, initialize_db, get_authenticated_headers,
     default_process_registration_constructor,
 ):
