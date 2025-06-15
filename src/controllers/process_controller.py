@@ -1,14 +1,16 @@
 from typing import Optional
 
-from src.controllers.base_controller import (
-    BaseController,
-    apply_valid_updates_or_fail,
-    safe_save,
-)
+from tortoise.transactions import in_transaction
+
+from src.controllers.backup_data_controller import BackupDataController
+from src.controllers.utils.base_controller import BaseController
+from src.controllers.utils.instance_helper import InstanceHelper
 from src.models import User
 from src.models.process import Process
-from src.utils.exceptions import EmptyDataException
-from src.utils.format_date import get_current_datetime
+from src.utils.exceptions import (
+    DuplicateFieldException,
+    EmptyDataException,
+)
 
 
 class ProcessController(BaseController):
@@ -59,14 +61,38 @@ class ProcessController(BaseController):
         if not process:
             raise EmptyDataException(f'The process for the id: "{process_id}" does not exist.')
 
+        instance_helper = InstanceHelper(instance=process)
         fields_to_update = {
             'name': name,
             'description': description,
             'is_active': is_active,
         }
-        apply_valid_updates_or_fail(fields_to_update, process)
+        instance_helper.apply_updates(fields=fields_to_update)
 
-        process.modified_at = get_current_datetime()
-        await safe_save(instance=process)
+        await instance_helper.save_instance()
 
         return process
+
+    async def delete_process(self, process_id: str) -> bool:
+        process = await self.get_process_by_id(process_id=process_id)
+
+        # TODO: refactor >
+        if not process:
+            raise EmptyDataException(f'The process for the id: "{process_id}" does not exist.')
+
+        async with in_transaction() as connection:
+            backup_data_controller = BackupDataController(user=self._user)
+            try:
+                backup_data = bool(
+                    await backup_data_controller.create_backup_data(
+                        instance=process,
+                        metadata={'name': process.name},
+                    ),
+                )
+            except DuplicateFieldException:
+                backup_data = True
+
+            if backup_data:
+                await process.delete(using_db=connection)
+                return True
+        return False

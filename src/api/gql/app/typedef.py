@@ -1,5 +1,8 @@
 from ariadne import gql
 
+from src.api.gql.app.mutations.resolvers.delete_process_mutation import (
+    delete_process_type_gql,
+)
 from src.api.gql.app.mutations.resolvers.register_process_mutation import (
     register_process_type_gql,
 )
@@ -49,6 +52,7 @@ type Mutation {{
     {register_process_type_gql.strip()}
     {update_user_type_gql.strip()}
     {update_process_type_gql.strip()}
+    {delete_process_type_gql.strip()}
 }}
 """
 

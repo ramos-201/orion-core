@@ -2,7 +2,7 @@ from typing import Optional
 
 from tortoise.expressions import Q
 
-from src.controllers.base_controller import BaseController
+from src.controllers.utils.base_controller import BaseController
 from src.models import User
 
 

@@ -12,41 +12,18 @@ from tortoise.expressions import Q
 from tortoise.models import MODEL
 
 from src.models import User
-from src.utils.exceptions import (
-    DuplicateFieldException,
-    EmptyDataException,
-)
-from src.utils.validate_data import is_value_null_or_empty
-
-
-async def safe_save(instance: MODEL) -> None:
-    try:
-        await instance.save()
-    except IntegrityError as error:
-        field_name = str(error).split()[-1].split('.')[-1]
-        raise DuplicateFieldException(message=f'The data for the field "{field_name}" already exists.')
-
-
-def apply_valid_updates_or_fail(fields: dict, instance: MODEL) -> None:
-    updated = False
-    for field, value in fields.items():
-        if not is_value_null_or_empty(value):
-            setattr(instance, field, value)
-            updated = True
-
-    if not updated:
-        raise EmptyDataException('No valid data was submitted for update.')
+from src.utils.exceptions import DuplicateFieldException
 
 
 class BaseController(ABC):
     @abstractmethod
     def __init__(self, model: MODEL, user: Optional[User] = None):
-        self.user = user
+        self._user = user
         self._model = model
 
     def _inject_user_in_kwargs_if_exists(self, **kwargs: Any) -> dict[str, Any]:
-        if self.user:
-            kwargs['user'] = self.user
+        if self._user:
+            kwargs['user'] = self._user
         return kwargs
 
     async def _create(self, **kwargs: Any) -> MODEL:

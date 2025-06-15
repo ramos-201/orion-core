@@ -4,12 +4,8 @@ from typing import (
 )
 
 from src.api.gql.user.types.schemes_type.user_type import UserType
-from src.controllers.base_controller import (
-    apply_valid_updates_or_fail,
-    safe_save,
-)
+from src.controllers.utils.instance_helper import InstanceHelper
 from src.models import User
-from src.utils.format_date import get_current_datetime
 from src.utils.login_required import login_required
 
 
@@ -37,9 +33,8 @@ async def resolve_update_user(
         'last_name': last_name,
         'mobile_phone': mobile_phone,
     }
-    apply_valid_updates_or_fail(fields_to_update, user)
-
-    user.modified_at = get_current_datetime()
-    await safe_save(instance=user)
+    instance_helper = InstanceHelper(instance=user)
+    instance_helper.apply_updates(fields=fields_to_update)
+    await instance_helper.save_instance()
 
     return UserType.to_result(user=user)
