@@ -13,7 +13,7 @@ from src.gql.resolvers import execute_gql
 AUTH_GQL_ENDPOINT = '/graphql-auth'
 
 
-async def execute_auth_endpoint(request: Request) -> JSONResponse:
+async def _execute_auth_endpoint(request: Request) -> JSONResponse:
     data = await request.json()
     _, result = await execute_gql(data=data)
     return JSONResponse(result)
@@ -21,7 +21,7 @@ async def execute_auth_endpoint(request: Request) -> JSONResponse:
 
 app = Starlette(
     routes=[
-        Route(AUTH_GQL_ENDPOINT, execute_auth_endpoint, methods=['POST']),
+        Route(AUTH_GQL_ENDPOINT, _execute_auth_endpoint, methods=['POST']),
     ],
     on_startup=[initialize_db],
     on_shutdown=[close_db],

@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  test_db:
+    image: postgres:15
+    container_name: db_orion_postgres_test
+    environment:
+      POSTGRES_DB: db_orion_test
+      POSTGRES_USER: user_orion_test
+      POSTGRES_PASSWORD: password_orion_test
+    ports:
+      - "5435:5432"
+    volumes:
+      - test_pgdata:/var/lib/postgresql/data
+
+volumes:
+  test_pgdata:
