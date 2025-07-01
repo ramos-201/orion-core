@@ -83,3 +83,23 @@ async def test_create_account_mutation_when_unique_fields_exist_in_account_model
             },
         }],
     }
+
+
+@mark.asyncio
+async def test_register_account_mutation_with_empty_required_variables_returns_empty_data_error(client, variables):
+    variables['accountData']['email'] = ''
+    variables['accountData']['username'] = ''
+    variables['accountData']['password'] = ''
+
+    response = await client.post(AUTH_GQL_ENDPOINT, json={'query': mutation, 'variables': variables})
+    assert response.status_code == 200
+
+    response_json = response.json()
+    assert response_json == {
+        'data': None,
+        'errors': [{
+            'error_type': ErrorTypeEnum.EMPTY_DATA_ERROR.value,
+            'message': 'The following fields cannot be empty: ["email", "username", "password"].',
+            'details': {},
+        }],
+    }

@@ -7,7 +7,7 @@ from tortoise import (
 
 
 class Account(Model):
-    id = fields.UUIDField(pk=True, default=uuid.uuid4())
+    id = fields.UUIDField(pk=True, default=uuid.uuid4)
     created_at = fields.DatetimeField(auto_now_add=True)
     modified_at = fields.DatetimeField(auto_now=True)
     email = fields.CharField(max_length=120, unique=True)

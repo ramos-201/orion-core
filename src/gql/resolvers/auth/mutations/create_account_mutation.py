@@ -7,6 +7,7 @@ from ariadne_graphql_modules import (
 
 from src.controllers.account_controller import AccountController
 from src.gql.schemes.types import AccountType
+from src.utils.data_validator import validate_not_empty_fields
 
 
 class AccountInput(InputType):
@@ -35,6 +36,12 @@ class CreateAccountMutation(MutationType):
         email = account_data['email']
         username = account_data['username']
         password = account_data['password']
+
+        validate_not_empty_fields(
+            email=email,
+            username=username,
+            password=password,
+        )
 
         account_controller = AccountController()
 
