@@ -10,9 +10,9 @@ from src.gql.schemes.types import AccountType
 from src.utils.data_validator import validate_not_empty_fields
 
 
-class AccountInput(InputType):
+class CreateAccountInput(InputType):
     __schema__ = """
-    input AccountInput {
+    input CreateAccountInput {
         email: String!
         username: String!
         password: String!
@@ -24,15 +24,15 @@ class CreateAccountMutation(MutationType):
     __schema__ = gql("""
     type Mutation {
         createAccount(
-            accountData: AccountInput!
+            accountData: CreateAccountInput!
         ): AccountType!
     }
     """)
-    __requires__ = [AccountInput, AccountType]
+    __requires__ = [CreateAccountInput, AccountType]
     __args__ = convert_case
 
     @staticmethod
-    async def resolve_mutation(_, info, account_data: AccountInput) -> dict:
+    async def resolve_mutation(_, info, account_data: CreateAccountInput) -> dict:
         email = account_data['email']
         username = account_data['username']
         password = account_data['password']

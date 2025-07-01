@@ -17,3 +17,10 @@ class AccountController(BaseController):
             username=username,
             password=password,
         )
+
+    async def get_account(
+        self,
+        user: str,
+        password: str,
+    ):
+        return await self.model.get_or_none(username=user, password=password)

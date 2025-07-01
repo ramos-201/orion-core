@@ -16,6 +16,7 @@ from configs import (
     TEST_DB_USER,
 )
 from src.main import app
+from src.utils import jwt_handler
 
 
 @fixture(scope='function', autouse=True)
@@ -52,3 +53,8 @@ async def default_account_constructor():
     user = await AccountFactory.build()
     await user.save()
     return user
+
+
+@fixture
+def patch_expired_token(mocker):
+    mocker.patch.object(jwt_handler, 'MINUTES_EXPIRATION_JWT', '-1')

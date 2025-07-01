@@ -1,7 +1,20 @@
-from ariadne_graphql_modules import make_executable_schema
+from ariadne_graphql_modules import (
+    CollectionType,
+    make_executable_schema,
+)
 
-from src.gql.resolvers.auth.mutations import CreateAccountMutation
+from src.gql.resolvers.auth.mutations import (
+    AuthenticationMutation,
+    CreateAccountMutation,
+)
 from src.gql.resolvers.auth.queries import EmptyQuery
 
 
-schema = make_executable_schema(EmptyQuery, CreateAccountMutation)
+class AccountMutations(CollectionType):
+    __types__ = [
+        CreateAccountMutation,
+        AuthenticationMutation,
+    ]
+
+
+schema = make_executable_schema(EmptyQuery, AccountMutations)

@@ -8,7 +8,7 @@ from src.models import Account
 
 mutation = """
 mutation createAccount(
-    $accountData: AccountInput!
+    $accountData: CreateAccountInput!
 ) {
     createAccount(
         accountData: $accountData
