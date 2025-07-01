@@ -17,9 +17,6 @@ class AccountPayload(ObjectType, ResultGQLBase):
     @classmethod
     def to_result(cls, account: Account, token: str) -> dict:
         return {
-            'account': {
-                'username': '',
-                'email': '',
-            },
+            'account': AccountType.to_result(account=account),
             'token': token,
         }

@@ -10,13 +10,13 @@ user_id = uuid.uuid4()
 
 
 def test_create_access_token_success():
-    token = create_access_token(user_id=user_id)
+    token = create_access_token(account_id=user_id)
     assert token is not None
     assert type(token) is str
 
 
 def test_decode_access_token():
-    token = create_access_token(user_id=user_id)
+    token = create_access_token(account_id=user_id)
     assert token != user_id
 
     decoded = decode_access_token(token=token)
@@ -24,7 +24,7 @@ def test_decode_access_token():
 
 
 def test_decode_expired_token(patch_expired_token):
-    token = create_access_token(user_id=user_id)
+    token = create_access_token(account_id=user_id)
     assert decode_access_token(token) is None
 
 

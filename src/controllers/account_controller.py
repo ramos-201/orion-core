@@ -1,3 +1,5 @@
+from tortoise.expressions import Q
+
 from src.controllers.base_controller import BaseController
 from src.models import Account
 
@@ -18,9 +20,12 @@ class AccountController(BaseController):
             password=password,
         )
 
-    async def get_account(
+    async def get_account_by_credentials(
         self,
-        user: str,
+        identifier: str,
         password: str,
-    ):
-        return await self.model.get_or_none(username=user, password=password)
+    ) -> Account:
+        return await self._get_or_none(
+            Q(email=identifier) | Q(username=identifier),
+            password=password,
+        )

@@ -6,6 +6,7 @@ from abc import (
 from typing import Any
 
 from tortoise.exceptions import IntegrityError
+from tortoise.expressions import Q
 from tortoise.models import MODEL
 
 from src.utils.exception import DuplicateFieldException
@@ -26,3 +27,6 @@ class BaseController(ABC):
                 message=f'The data for the field "{field_name}" already exists.',
                 value=field_name,
             )
+
+    async def _get_or_none(self, *args: Q, **kwargs: Any) -> MODEL:
+        return await self.model.get_or_none(*args, **kwargs)

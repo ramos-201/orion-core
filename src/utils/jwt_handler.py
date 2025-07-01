@@ -15,12 +15,12 @@ from configs import (
 )
 
 
-def create_access_token(user_id: UUID) -> str:
+def create_access_token(account_id: UUID) -> str:
     now = datetime.now(timezone.utc)
     expiration = now + timedelta(minutes=int(MINUTES_EXPIRATION_JWT))
 
     payload = {
-        'sub': str(user_id),
+        'sub': str(account_id),
         'exp': expiration,
     }
 
